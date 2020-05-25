@@ -6,11 +6,16 @@ import { createStackNavigator } from '@react-navigation/stack'
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
+import { PersistGate } from 'redux-persist/integration/react';
+import { Provider } from 'react-redux'
+
+import { store, persistor } from './store/configureStore';
+
 import SafeAreaStyle from './utilities/safeareastyle';
-import Home from './components/home';
-import Configuration from './components/configuration';
-import History from './components/history';
-import NewItem from './components/newitem';
+import Home from './screens/home';
+import Configuration from './screens/configuration';
+import History from './screens/history';
+import NewItem from './screens/newitem';
 
 const AppTabNavigator = createMaterialTopTabNavigator();
 const initialLayout = { width: Dimensions.get('window').width };
@@ -50,21 +55,25 @@ export default class App extends Component {
 
   render() {
     return (
-      <SafeAreaView style={SafeAreaStyle.SafeArea}>
-        <NavigationContainer>
-          <RootStack.Navigator mode="modal" initialRouteName='HomeMain'>
-            <RootStack.Screen name='HomeMain' component={MainTabNavigator} options={{ headerShown: false }} />
-            <RootStack.Screen name="NewItemModal" component={NewItem}
-              options={{
-                title: 'Create new Reminder',
-                headerStyle: {
-                  backgroundColor: 'powderblue',
-                }
-              }}
-            />
-          </RootStack.Navigator>
-        </NavigationContainer>
-      </SafeAreaView >
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <SafeAreaView style={SafeAreaStyle.SafeArea}>
+            <NavigationContainer>
+              <RootStack.Navigator mode="modal" initialRouteName='HomeMain'>
+                <RootStack.Screen name='HomeMain' component={MainTabNavigator} options={{ headerShown: false }} />
+                <RootStack.Screen name="NewItemModal" component={NewItem}
+                  options={{
+                    title: 'Create new Reminder',
+                    headerStyle: {
+                      backgroundColor: 'powderblue',
+                    }
+                  }}
+                />
+              </RootStack.Navigator>
+            </NavigationContainer>
+          </SafeAreaView>
+        </PersistGate>
+      </Provider>
     );
   }
 }
