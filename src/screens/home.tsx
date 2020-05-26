@@ -11,9 +11,8 @@ interface Props {
 class Home extends Component<Props> {
     navigation = this.props.navigation;
 
-    openNewItem = () => {
-        console.log(this.props);
-        this.navigation.navigate('NewItemModal');
+    openNewReminder = () => {
+        this.navigation.navigate('NewReminder');
     }
 
     render() {
@@ -24,7 +23,7 @@ class Home extends Component<Props> {
 
                 <FAB style={styles.fab}
                     icon="plus"
-                    onPress={() => this.openNewItem()}
+                    onPress={() => this.openNewReminder()}
                 />
             </View>
         );
@@ -33,10 +32,10 @@ class Home extends Component<Props> {
 
 // Map State To Props (Redux Store Passes State To Component)
 const mapStateToProps = (state: any) => {
-    console.log(state);
+    console.log('Home map state', state);
     // Redux Store --> Component
     return {
-        remindersActivity: state.reminderMaster.remindersActivity
+        remindersActivity: state.remindersActivity
     };
 };
 

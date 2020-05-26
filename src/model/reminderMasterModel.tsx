@@ -7,10 +7,11 @@ export interface reminder {
     reminderId: string,
     reminderName: string,
     reminderType: string,
-    reminderMonth: number,
-    reminderDay: number,
+    reminderMonth?: number,
+    reminderDay?: number,
+    dueDate?: Date,
     reminderTime: string,
-    notes: string,
+    notes?: string,
     active: boolean,
     isSync: boolean
 };
@@ -19,12 +20,12 @@ export interface reminderActivity {
     reminderActivityId: string,
     reminderName: string,
     reminderType: string,
-    reminderMonth: number,
-    reminderDay: number,
+    reminderMonth?: number,
+    reminderDay?: number,
+    dueDate?: Date,
     reminderTime: string,
-    dueDate: Date,
-    nextDueDate: Date,
-    notes: string,
+    nextDueDate?: Date,
+    notes?: string,
     completed: boolean,
     isSync: boolean
 };

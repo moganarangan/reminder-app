@@ -2,17 +2,17 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { createStore } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 
-import RootReducer from './reducers/index'
+import reminderMaster from './reducers/reminderMasterReducer'
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   whitelist: [
-    'reminderMasterReducer',
+    'reminderMaster',
   ]
 }
 
-const persistedReducer = persistReducer(persistConfig, RootReducer)
+const persistedReducer = persistReducer(persistConfig, reminderMaster)
 
 // Redux: Store
 const store = createStore(

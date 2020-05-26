@@ -15,7 +15,11 @@ import SafeAreaStyle from './utilities/safeareastyle';
 import Home from './screens/home';
 import Configuration from './screens/configuration';
 import History from './screens/history';
-import NewItem from './screens/newitem';
+import NewReminder from './screens/newReminder';
+
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 
 const AppTabNavigator = createMaterialTopTabNavigator();
 const initialLayout = { width: Dimensions.get('window').width };
@@ -51,7 +55,28 @@ function MainTabNavigator() {
   )
 }
 
+const askNotification = async () => {
+  const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+  let finalStatus = existingStatus;
+  if (existingStatus !== 'granted') {
+    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    finalStatus = status;
+  }
+
+  if (Constants.isDevice && finalStatus === 'granted') {
+    Notifications.addListener(handleNotification);
+  }
+};
+
+const handleNotification = () => {
+  console.warn('ok! got your notification');
+}
+
 export default class App extends Component {
+
+  async componentDidMount() {
+    await askNotification();
+  }
 
   render() {
     return (
@@ -61,7 +86,7 @@ export default class App extends Component {
             <NavigationContainer>
               <RootStack.Navigator mode="modal" initialRouteName='HomeMain'>
                 <RootStack.Screen name='HomeMain' component={MainTabNavigator} options={{ headerShown: false }} />
-                <RootStack.Screen name="NewItemModal" component={NewItem}
+                <RootStack.Screen name="NewReminder" component={NewReminder}
                   options={{
                     title: 'Create new Reminder',
                     headerStyle: {

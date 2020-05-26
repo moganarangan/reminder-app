@@ -10,9 +10,9 @@ const Initial_State: reminderMasterModel = {
 const reminderMaster = (state: reminderMasterModel = Initial_State, action: any) => {
     switch (action.type) {
         case ADD_REMINDER: {
-            console.log(state);
-            console.log(action);
-            return [...state.reminders, action.newReminder]
+            console.log('Reducer State', state);
+            console.log('Reducer Action', action);
+            return Object.assign({}, state, { reminders: [...state.reminders, action.newReminder] });
         }
         // Default
         default: {

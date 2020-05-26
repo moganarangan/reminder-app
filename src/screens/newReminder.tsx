@@ -5,16 +5,20 @@ import ReminderHandler from "../handlers/reminderHandler";
 import { reminder } from '../model/reminderMasterModel';
 
 interface Props {
+    navigation: any,
     state: reminder
 }
 
-export default class NewItem extends Component<Props> {
+export default class NewReminder extends Component<Props> {
+    navigation = this.props.navigation;
+
     state: reminder = {
         reminderId: '',
         reminderName: '',
         reminderType: '',
         reminderMonth: -1,
         reminderDay: -1,
+        dueDate: undefined,
         reminderTime: '',
         notes: '',
         active: true,
@@ -23,6 +27,7 @@ export default class NewItem extends Component<Props> {
 
     saveReminder = () => {
         ReminderHandler.addReminder(this.state);
+        this.navigation.goBack();
     }
 
     render() {
