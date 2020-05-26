@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { FAB, Text } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
 import { connect } from 'react-redux';
 
 interface Props {
     navigation: any,
-    reminders: Array<any>
+    remindersActivity: Array<any>
 }
 
 class Home extends Component<Props> {
     navigation = this.props.navigation;
 
     openNewItem = () => {
-        console.log(this.props.reminders);
+        console.log(this.props);
         this.navigation.navigate('NewItemModal');
     }
 
@@ -32,25 +31,17 @@ class Home extends Component<Props> {
     }
 }
 
-// Wrap and export
-// function (props: any) {
-//     const navigation = useNavigation();
-
-//     return <Home {...props} navigation={navigation} />;
-// }
-
 // Map State To Props (Redux Store Passes State To Component)
 const mapStateToProps = (state: any) => {
+    console.log(state);
     // Redux Store --> Component
     return {
-        reminders: state.reminderReducer.reminders,
-        navigation: useNavigation()
+        remindersActivity: state.reminderMaster.remindersActivity
     };
 };
 
 // Exports
 export default connect(mapStateToProps, null)(Home);
-
 
 const styles = StyleSheet.create({
     container: {

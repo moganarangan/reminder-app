@@ -1,11 +1,11 @@
 // Imports: Dependencies
 import { combineReducers } from 'redux';
 // Imports: Reducers
-import reminderReducer from './reminderReducer'
+import reminderMaster from './reminderMasterReducer'
 
 // Redux: Root Reducer
 const rootReducer = combineReducers({
-    reminderReducer: reminderReducer
+    reminderMaster
 });
 
 // Exports

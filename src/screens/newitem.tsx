@@ -1,28 +1,28 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
-import { connect } from 'react-redux';
-import { newReminderSave } from '../store/actions/reminderAction';
+import ReminderHandler from "../handlers/reminderHandler";
+import { reminder } from '../model/reminderMasterModel';
 
 interface Props {
-    state: any,
-    reduxNewReminder: Function
+    state: reminder
 }
 
-class NewItem extends Component<Props> {
-    state = {
+export default class NewItem extends Component<Props> {
+    state: reminder = {
+        reminderId: '',
         reminderName: '',
         reminderType: '',
-        reminderMonth: '',
-        reminderDay: '',
+        reminderMonth: -1,
+        reminderDay: -1,
         reminderTime: '',
         notes: '',
-        active: ''
+        active: true,
+        isSync: false
     }
 
     saveReminder = () => {
-        console.log(this.state);
-        this.props.reduxNewReminder(this.state);
+        ReminderHandler.addReminder(this.state);
     }
 
     render() {
@@ -45,18 +45,6 @@ class NewItem extends Component<Props> {
         )
     }
 }
-
-// Map Dispatch To Props (Dispatch Actions To Reducers. Reducers Then Modify The Data And Assign It To Your Props)
-const mapDispatchToProps = (dispatch: any) => {
-    // Action
-    return {
-        // Save New Reminder Counter
-        reduxNewReminder: (newReminder: any) => dispatch(newReminderSave(newReminder)),
-    };
-};
-
-// Exports
-export default connect(null, mapDispatchToProps)(NewItem);
 
 const styles = StyleSheet.create({
     newremindercontainer: {
