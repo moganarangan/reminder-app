@@ -1,7 +1,7 @@
 import { store } from "../store/configureStore";
 import { addReminder } from '../store/actions/reminderAction';
 import { reminder } from "../model/reminderMasterModel";
-import { Notifications } from 'expo';
+import NotificationHandler from './notificationHandler';
 
 export default class ReminderHandler {
     static addReminder(newReminder: reminder) {
@@ -10,19 +10,6 @@ export default class ReminderHandler {
         // calculate immediate reminder schedule
         // push notification schedule
 
-        const localNotification = {
-            title: 'done',
-            body: 'done!'
-        };
-
-        const schedulingOptions = {
-            time: (new Date()).getTime() + 10
-        }
-
-        // Notifications show only when app is not active.
-        // (ie. another app being used or device's screen is locked)
-        Notifications.scheduleLocalNotificationAsync(
-            localNotification, schedulingOptions
-        );
+        NotificationHandler.showNotification(newReminder.reminderName);
     }
 }

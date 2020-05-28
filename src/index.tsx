@@ -5,21 +5,16 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { createStackNavigator } from '@react-navigation/stack'
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux'
 
+import NotificationHandler from './handlers/notificationHandler';
 import { store, persistor } from './store/configureStore';
-
 import SafeAreaStyle from './utilities/safeareastyle';
 import Home from './screens/home';
 import Configuration from './screens/configuration';
 import History from './screens/history';
 import NewReminder from './screens/newReminder';
-
-import { Notifications } from 'expo';
-import * as Permissions from 'expo-permissions';
-import Constants from 'expo-constants';
 
 const AppTabNavigator = createMaterialTopTabNavigator();
 const initialLayout = { width: Dimensions.get('window').width };
@@ -55,27 +50,10 @@ function MainTabNavigator() {
   )
 }
 
-const askNotification = async () => {
-  const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-  let finalStatus = existingStatus;
-  if (existingStatus !== 'granted') {
-    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-    finalStatus = status;
-  }
-
-  if (Constants.isDevice && finalStatus === 'granted') {
-    Notifications.addListener(handleNotification);
-  }
-};
-
-const handleNotification = () => {
-  console.warn('ok! got your notification');
-}
-
 export default class App extends Component {
 
   async componentDidMount() {
-    await askNotification();
+    await NotificationHandler.askNotification();
   }
 
   render() {
