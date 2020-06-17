@@ -5,6 +5,7 @@ import { reminder } from '../model/reminderMasterModel';
 import { Input, Text, Select, SelectItem, Datepicker, Icon, Button, Layout } from '@ui-kitten/components';
 import Timepicker from '../utilities/time-picker.component';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Spinner } from '@ui-kitten/components';
 
 interface Props {
     navigation: any,
@@ -12,12 +13,19 @@ interface Props {
 }
 
 interface State {
-    reminderV: reminder
+    reminderV: reminder,
+    loading: boolean,
+    reminderTypes: Array<any>,
+    months: Array<any>,
+    days: Array<number>,
+    nameCaption: string,
+    nameStatus: string
 }
 
 export default class NewReminder extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
+
         const { itemId } = this.props.route.params;
         if (itemId) {
             this.props.navigation.setOptions({ title: 'Edit Reminder' });
@@ -28,6 +36,10 @@ export default class NewReminder extends Component<Props, State> {
 
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
+        var date = new Date();
+        var year = date.getFullYear();
+        const count = new Date(year, 1, 0).getDate();
+        const days = Array.from(Array(count).keys(), (_, i) => i + 1);
 
         this.state = {
             reminderV: {
@@ -41,35 +53,34 @@ export default class NewReminder extends Component<Props, State> {
                 notes: '',
                 active: true,
                 isSync: false
-            }
+            },
+            loading: true,
+            reminderTypes: [{ store: 1, value: 'Daily' }, { store: 2, value: 'Monthly' }, { store: 3, value: 'Specific Date' }],
+            months: [{ store: 1, value: 'January' }
+                , { store: 2, value: 'February' }
+                , { store: 3, value: 'March' }
+                , { store: 4, value: 'April' }
+                , { store: 5, value: 'May' }
+                , { store: 6, value: 'June' }
+                , { store: 7, value: 'July' }
+                , { store: 8, value: 'August' }
+                , { store: 9, value: 'September' }
+                , { store: 10, value: 'October' }
+                , { store: 11, value: 'November' }
+                , { store: 12, value: 'December' }],
+            days: days,
+            nameCaption: '',
+            nameStatus: 'basic'
         }
-
-        this.populateDays(1);
     }
 
-    reminderTypes = [{ store: 1, value: 'Daily' }, { store: 2, value: 'Monthly' }, { store: 3, value: 'Specific Date' }];
-    months = [{ store: 1, value: 'January' }
-        , { store: 2, value: 'February' }
-        , { store: 3, value: 'March' }
-        , { store: 4, value: 'April' }
-        , { store: 5, value: 'May' }
-        , { store: 6, value: 'June' }
-        , { store: 7, value: 'July' }
-        , { store: 8, value: 'August' }
-        , { store: 9, value: 'September' }
-        , { store: 10, value: 'October' }
-        , { store: 11, value: 'November' }
-        , { store: 12, value: 'December' }];
-
-    days: Array<number> = [];
-
     populateDays = (month: number) => {
-        this.days = [];
         var date = new Date();
         var year = date.getFullYear();
         const count = new Date(year, month, 0).getDate();
+        const days = Array.from(Array(count).keys(), (_, i) => i + 1);
 
-        this.days = Array.from(Array(count).keys(), (_, i) => i + 1);
+        this.setState({ days });
     }
 
     onReminderDateChange = (date: Date) => {
@@ -79,13 +90,13 @@ export default class NewReminder extends Component<Props, State> {
                 dueDate: date
             }
         }));
-    };
+    }
 
     setReminderType = (item: any) => {
         this.setState(prevState => ({
             reminderV: {
                 ...prevState.reminderV,
-                reminderType: this.reminderTypes[item.row].store
+                reminderType: this.state.reminderTypes[item.row].store
             }
         }));
     }
@@ -94,11 +105,11 @@ export default class NewReminder extends Component<Props, State> {
         this.setState(prevState => ({
             reminderV: {
                 ...prevState.reminderV,
-                reminderMonth: this.months[item.row].store
+                reminderMonth: this.state.months[item.row].store
             }
         }));
 
-        this.populateDays(this.months[item.row].store);
+        this.populateDays(this.state.months[item.row].store);
     }
 
     setName = (name: string) => {
@@ -108,6 +119,8 @@ export default class NewReminder extends Component<Props, State> {
                 reminderName: name
             }
         }));
+
+        this.validate();
     }
 
     setTime = (value: Date) => {
@@ -124,15 +137,32 @@ export default class NewReminder extends Component<Props, State> {
         this.setState(prevState => ({
             reminderV: {
                 ...prevState.reminderV,
-                reminderDay: this.days[item.row]
+                reminderDay: this.state.days[item.row]
             }
         }));
     }
 
     saveReminder = () => {
-        // validate for mandatory && verify data
-        ReminderHandler.addReminder(this.state.reminderV);
-        this.props.navigation.goBack();
+        if (this.validate()) {
+            ReminderHandler.addReminder(this.state.reminderV);
+            this.props.navigation.goBack();
+        }
+    }
+
+    validate = () => {
+        if (!this.state.reminderV.reminderName) {
+            this.setState({
+                nameStatus: 'danger',
+                nameCaption: 'Reminder name is required'
+            });
+            return false;
+        } else {
+            this.setState({
+                nameStatus: 'basic',
+                nameCaption: ''
+            });
+            return true;
+        }
     }
 
     dismissKeyboard = () => {
@@ -140,34 +170,44 @@ export default class NewReminder extends Component<Props, State> {
     }
 
     render() {
+
+        // if (this.state.loading) {
+        //     return (
+        //         <Layout style={styles.loading} level='1'>
+        //             <Spinner size='giant' status='info' />
+        //         </Layout>
+        //     )
+        // } else {
         return (
             <ScrollView>
                 <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
-                    <Layout style={styles.newremindercontainer}>
+                    <Layout style={styles.reminderContainer}>
                         <Input
                             label={evaProps => <Text {...evaProps}>Reminder name</Text>}
                             onChangeText={this.setName}
                             style={styles.item}
                             {...this.state.reminderV.reminderName}
+                            status={this.state.nameStatus}
+                            caption={this.state.nameCaption}
                         />
 
                         <Select
                             label={evaProps => <Text {...evaProps}>Reminder Type</Text>}
-                            value={this.reminderTypes[this.reminderTypes.findIndex(i => i.store === this.state.reminderV.reminderType)].value}
+                            value={this.state.reminderTypes[this.state.reminderTypes.findIndex(i => i.store === this.state.reminderV.reminderType)].value}
                             onSelect={this.setReminderType}
                             onFocus={this.dismissKeyboard}
                             style={styles.item}>
-                            {this.reminderTypes.map((item) => <SelectItem key={item.store} title={evaProps => <Text {...evaProps}>{item.value}</Text>} />)}
+                            {this.state.reminderTypes.map((item) => <SelectItem key={item.store} title={evaProps => <Text {...evaProps}>{item.value}</Text>} />)}
                         </Select>
 
                         {(this.state.reminderV.reminderType === 2) &&
                             <Select
                                 label={evaProps => <Text {...evaProps}>Reminder Month</Text>}
-                                value={this.months[this.months.findIndex(i => i.store === this.state.reminderV.reminderMonth)].value}
+                                value={this.state.months[this.state.months.findIndex(i => i.store === this.state.reminderV.reminderMonth)].value}
                                 onSelect={this.setReminderMonth}
                                 onFocus={this.dismissKeyboard}
                                 style={styles.item}>
-                                {this.months.map((item) => <SelectItem key={item.store} title={evaProps => <Text {...evaProps}>{item.value}</Text>} />)}
+                                {this.state.months.map((item) => <SelectItem key={item.store} title={evaProps => <Text {...evaProps}>{item.value}</Text>} />)}
                             </Select>
                         }
 
@@ -178,7 +218,7 @@ export default class NewReminder extends Component<Props, State> {
                                 onSelect={this.setReminderDay}
                                 onFocus={this.dismissKeyboard}
                                 style={styles.item}>
-                                {this.days.map((item) => <SelectItem key={item} title={evaProps => <Text {...evaProps}>{item}</Text>} />)}
+                                {this.state.days.map((item) => <SelectItem key={item} title={evaProps => <Text {...evaProps}>{item}</Text>} />)}
                             </Select>
                         }
 
@@ -216,11 +256,12 @@ export default class NewReminder extends Component<Props, State> {
                 </TouchableWithoutFeedback>
             </ScrollView>
         )
+        // }
     }
 }
 
 const styles = StyleSheet.create({
-    newremindercontainer: {
+    reminderContainer: {
         paddingTop: 20,
         paddingLeft: 20,
         paddingRight: 20,
@@ -230,4 +271,10 @@ const styles = StyleSheet.create({
     item: {
         paddingBottom: 15
     },
+    loading: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1
+    }
 });
