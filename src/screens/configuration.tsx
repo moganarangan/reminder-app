@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
+import { Layout, Text } from '@ui-kitten/components';
 
 interface Props {
     navigation: any,
@@ -11,10 +11,9 @@ interface Props {
 class Configuration extends React.Component<Props> {
     render() {
         return (
-            <View style={styles.container}>
-                <Text>This is Configuration.</Text>
-            </View>
-
+            <Layout style={styles.container}>
+                <Text category='h5'>This is Configuration.</Text>
+            </Layout>
         );
     }
 }

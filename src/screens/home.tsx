@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { FAB, Text } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { FAB } from 'react-native-paper';
 import { connect } from 'react-redux';
+import { Layout, Text } from '@ui-kitten/components';
 
 interface Props {
     navigation: any,
@@ -9,23 +10,22 @@ interface Props {
 }
 
 class Home extends Component<Props> {
-    navigation = this.props.navigation;
 
     openNewReminder = () => {
-        this.navigation.navigate('NewReminder');
+        this.props.navigation.navigate('NewReminder', {});
     }
 
     render() {
         return (
-            <View style={styles.container}>
+            <Layout style={styles.container}>
 
-                <Text>This is Home.</Text>
+                <Text category='h5'>This is Home.</Text>
 
                 <FAB style={styles.fab}
                     icon="plus"
                     onPress={() => this.openNewReminder()}
                 />
-            </View>
+            </Layout>
         );
     }
 }
