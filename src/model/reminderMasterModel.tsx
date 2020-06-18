@@ -23,7 +23,7 @@ export interface reminderActivity {
     reminderMonth: number,
     reminderDay: number,
     dueDate: Date,
-    reminderTime: string,
+    reminderTime: Date,
     nextDueDate: Date,
     notes: string,
     completed: boolean,
