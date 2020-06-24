@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Keyboard } from 'react-native';
 import ReminderHandler from "../handlers/reminderHandler";
-import { reminder } from '../model/reminderMasterModel';
 import { Input, Text, Select, SelectItem, Datepicker, Icon, Button, Layout } from '@ui-kitten/components';
 import Timepicker from '../utilities/time-picker.component';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Spinner } from '@ui-kitten/components';
 import getRandom from '../utilities/random';
+import { reminder } from '../model/reminder';
 
 interface Props {
     navigation: any,

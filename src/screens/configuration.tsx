@@ -24,7 +24,7 @@ const mapStateToProps = (state: any) => {
 
     // Redux Store --> Component
     return {
-        reminders: state.reminders
+        reminders: state.reminderMaster.reminders
     };
 };
 

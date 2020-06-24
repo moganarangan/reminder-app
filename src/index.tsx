@@ -22,6 +22,7 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { FeatherIconsPack } from "./utilities/feather-icons";
 import { MaterialIconsPack } from "./utilities/material-icons";
 import TaskHandler from "./handlers/taskHandler";
+import { Title } from "react-native-paper";
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -70,7 +71,7 @@ export default class App extends Component {
             <PersistGate loading={null} persistor={persistor}>
               <SafeAreaView style={SafeAreaStyle.SafeArea}>
                 <NavigationContainer>
-                  <RootStack.Navigator mode='modal' initialRouteName='HomeMain' headerMode='screen' navigationOptions={{ header: { title: 'Reminder' } }} >
+                  <RootStack.Navigator mode='modal' initialRouteName='HomeMain' headerMode='screen' screenOptions={{ title: 'Reminder' }} >
                     <RootStack.Screen name='HomeMain' component={MainTabNavigator} options={{ headerShown: false }} />
                     <RootStack.Screen name="NewReminder" component={NewReminder}
                       options={{

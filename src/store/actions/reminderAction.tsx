@@ -1,8 +1,9 @@
 import {
   ADD_REMINDER, EDIT_REMINDER, DELETE_REMINDER,
   ADD_REMINDER_ACTIVITY, EDIT_REMINDER_ACTIVITY, DELETE_REMINDER_ACTIVITY
-} from '../../constans/reminderMaster'
-import { reminder, reminderActivity } from '../../model/reminderMasterModel';
+} from '../../constans/reminderMaster';
+import { reminder } from '../../model/reminder';
+import { reminderActivity } from '../../model/reminderActivity';
 
 export const addReminder = (newReminder: reminder) => ({
   type: ADD_REMINDER,

@@ -7,7 +7,7 @@ import { store } from '../store/configureStore';
 TaskManager.defineTask(REMINDER_TASK_NAME, () => {
     try {
         const state = store.getState();
-        state.reminders.forEach(async (r) => {
+        state.reminderMaster.reminders.forEach(async (r) => {
             ReminderHandler.addReminder(r, true);
         });
 

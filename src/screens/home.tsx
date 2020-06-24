@@ -35,7 +35,7 @@ const mapStateToProps = (state: any) => {
     console.log('Home map state', state);
     // Redux Store --> Component
     return {
-        remindersActivity: state.remindersActivity
+        remindersActivity: state.reminderMaster.remindersActivity
     };
 };
 

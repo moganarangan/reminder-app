@@ -1,10 +1,10 @@
 import { store } from '../store/configureStore';
 import { addReminder, addReminderActivity } from '../store/actions/reminderAction';
-import { reminder } from '../model/reminderMasterModel';
 import NotificationHandler from './notificationHandler';
 import getRandom from '../utilities/random';
-import { reminderActivity } from '../model/reminderMasterModel';
 import { LocalNotification } from 'expo/build/Notifications/Notifications.types';
+import { reminder } from '../model/reminder';
+import { reminderActivity } from '../model/reminderActivity';
 
 const one_day = 1000 * 60 * 60 * 24;
 
@@ -81,10 +81,11 @@ export default class ReminderHandler {
         today.setMinutes(0);
         today.setMilliseconds(0);
         const monthDate = new Date(today.getFullYear(), reminder.reminderMonth - 1, reminder.reminderDay);
-        const result = Math.round(monthDate.getTime() - today.getTime()) / one_day;
-        const final_Result = parseInt(result.toFixed(0));
 
-        if (final_Result > 0 && final_Result <= 3) {
+        const diffTime = Math.abs(monthDate.getTime() - today.getTime());
+        const diffDays = Math.ceil(diffTime / one_day);
+
+        if (diffDays > 0 && diffDays <= 3) {
             const h1 = reminder.reminderTime.getHours();
             const m1 = reminder.reminderTime.getMinutes();
             monthDate.setHours(h1);
@@ -129,11 +130,12 @@ export default class ReminderHandler {
         today.setHours(0);
         today.setMinutes(0);
         today.setMilliseconds(0);
-        const dueDate = reminder.dueDate
-        const result1 = Math.round(dueDate.getTime() - today.getTime()) / one_day;
-        const final_Result1 = parseInt(result1.toFixed(0));
+        const dueDate = reminder.dueDate;
 
-        if (final_Result1 > 0 && final_Result1 <= 3) {
+        const diffTime = Math.abs(dueDate.getTime() - today.getTime());
+        const diffDays = Math.ceil(diffTime / one_day);
+
+        if (diffDays > 0 && diffDays <= 3) {
             const h2 = reminder.reminderTime.getHours();
             const m2 = reminder.reminderTime.getMinutes();
             dueDate.setHours(h2);
@@ -183,7 +185,11 @@ export default class ReminderHandler {
 
         const now = new Date();
         now.setSeconds(scheduleTime.getSeconds() + 10);
-        //TODO:: calculate difference is more than 3 days then set notification 
-        NotificationHandler.showNotification(localNotification, { time: scheduleTime });
+        const diffTime = Math.abs(scheduleTime.getTime() - now.getTime());
+        const diffDays = Math.ceil(diffTime / one_day);
+
+        if (diffDays > 3) {
+            NotificationHandler.showNotification(localNotification, { time: scheduleTime });
+        }
     }
 }

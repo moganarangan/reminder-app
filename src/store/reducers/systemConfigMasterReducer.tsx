@@ -7,7 +7,7 @@ const Initial_State: SystemConfig = {
 };
 
 // Reducers (Modifies The State And Returns A New State)
-const systemConfigMaster = (state: SystemConfig = Initial_State, action: any) => {
+const systemConfigMaster = (state: SystemConfig = Initial_State, action: any): SystemConfig => {
     switch (action.type) {
         case EDIT_SYSTEM_CONFIG: {
             return Object.assign({}, state, { ...state, state: action.sys });
