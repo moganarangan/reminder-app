@@ -1,0 +1,1 @@
+export const REMINDER_TASK_NAME = 'background-set-reminder';

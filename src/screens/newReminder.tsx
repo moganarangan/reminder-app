@@ -89,8 +89,7 @@ export default class NewReminder extends Component<Props, State> {
                 dueDate: tomorrow,
                 reminderTime: tomorrow,
                 notes: '',
-                active: true,
-                isSync: false
+                active: true
             },
             loading: true,
             reminderTypes: [{ store: 1, value: 'Daily' }, { store: 2, value: 'Monthly' }, { store: 3, value: 'Specific Date' }],
@@ -239,80 +238,87 @@ export default class NewReminder extends Component<Props, State> {
         } else {
             return (
                 <ScrollView>
-                    <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
-                        <Layout style={styles.reminderContainer}>
-                            <Input
-                                label={evaProps => <Text {...evaProps}>Reminder name</Text>}
-                                onChangeText={this.setName}
-                                style={styles.item}
-                                {...this.state.reminderV.reminderName}
-                                status={this.state.nameStatus}
-                                caption={this.state.nameCaption}
-                            />
+                    <Layout style={styles.reminderContainer}>
+                        <Input
+                            label={evaProps => <Text {...evaProps}>Reminder name</Text>}
+                            onChangeText={this.setName}
+                            style={styles.item}
+                            {...this.state.reminderV.reminderName}
+                            status={this.state.nameStatus}
+                            caption={this.state.nameCaption}
+                            disabled={!this.insertMode}
+                        />
 
+                        <Select
+                            label={evaProps => <Text {...evaProps}>Reminder Type</Text>}
+                            value={this.state.reminderTypes[this.state.reminderTypes.findIndex(i => i.store === this.state.reminderV.reminderType)].value}
+                            onSelect={this.setReminderType}
+                            onFocus={this.dismissKeyboard}
+                            disabled={!this.insertMode}
+                            style={styles.item}>
+                            {this.state.reminderTypes.map((item) => <SelectItem key={item.store} title={evaProps => <Text {...evaProps}>{item.value}</Text>} />)}
+                        </Select>
+
+                        {(this.state.reminderV.reminderType === 2) &&
                             <Select
-                                label={evaProps => <Text {...evaProps}>Reminder Type</Text>}
-                                value={this.state.reminderTypes[this.state.reminderTypes.findIndex(i => i.store === this.state.reminderV.reminderType)].value}
-                                onSelect={this.setReminderType}
+                                label={evaProps => <Text {...evaProps}>Reminder Month</Text>}
+                                value={this.state.months[this.state.months.findIndex(i => i.store === this.state.reminderV.reminderMonth)].value}
+                                onSelect={this.setReminderMonth}
                                 onFocus={this.dismissKeyboard}
+                                disabled={!this.insertMode}
                                 style={styles.item}>
-                                {this.state.reminderTypes.map((item) => <SelectItem key={item.store} title={evaProps => <Text {...evaProps}>{item.value}</Text>} />)}
+                                {this.state.months.map((item) => <SelectItem key={item.store} title={evaProps => <Text {...evaProps}>{item.value}</Text>} />)}
                             </Select>
+                        }
 
-                            {(this.state.reminderV.reminderType === 2) &&
-                                <Select
-                                    label={evaProps => <Text {...evaProps}>Reminder Month</Text>}
-                                    value={this.state.months[this.state.months.findIndex(i => i.store === this.state.reminderV.reminderMonth)].value}
-                                    onSelect={this.setReminderMonth}
-                                    onFocus={this.dismissKeyboard}
-                                    style={styles.item}>
-                                    {this.state.months.map((item) => <SelectItem key={item.store} title={evaProps => <Text {...evaProps}>{item.value}</Text>} />)}
-                                </Select>
-                            }
-
-                            {(this.state.reminderV.reminderType === 2) &&
-                                <Select
-                                    label={evaProps => <Text {...evaProps}>Reminder Day</Text>}
-                                    value={this.state.reminderV.reminderDay}
-                                    onSelect={this.setReminderDay}
-                                    onFocus={this.dismissKeyboard}
-                                    style={styles.item}>
-                                    {this.state.days.map((item) => <SelectItem key={item} title={evaProps => <Text {...evaProps}>{item}</Text>} />)}
-                                </Select>
-                            }
-
-                            {(this.state.reminderV.reminderType === 3) &&
-                                <Datepicker
-                                    label={evaProps => <Text {...evaProps}>Due Date</Text>}
-                                    date={this.state.reminderV.dueDate}
-                                    onSelect={this.onReminderDateChange}
-                                    onFocus={this.dismissKeyboard}
-                                    style={styles.item}
-                                    accessoryRight={(props) => <Icon {...props} name='calendar' />}
-                                />
-                            }
-
-                            <Timepicker
-                                label={evaProps => <Text {...evaProps}>Reminder Time</Text>}
-                                date={this.state.reminderV.reminderTime}
+                        {(this.state.reminderV.reminderType === 2) &&
+                            <Select
+                                label={evaProps => <Text {...evaProps}>Reminder Day</Text>}
+                                value={this.state.reminderV.reminderDay}
+                                onSelect={this.setReminderDay}
                                 onFocus={this.dismissKeyboard}
+                                disabled={!this.insertMode}
+                                style={styles.item}>
+                                {this.state.days.map((item) => <SelectItem key={item} title={evaProps => <Text {...evaProps}>{item}</Text>} />)}
+                            </Select>
+                        }
+
+                        {(this.state.reminderV.reminderType === 3) &&
+                            <Datepicker
+                                label={evaProps => <Text {...evaProps}>Due Date</Text>}
+                                date={this.state.reminderV.dueDate}
+                                onSelect={this.onReminderDateChange}
+                                onFocus={this.dismissKeyboard}
+                                disabled={!this.insertMode}
                                 style={styles.item}
-                                accessoryRight={(props) => <Icon {...props} name='clock' />}
-                                onSelect={this.setTime} />
+                                accessoryRight={(props) => <Icon {...props} name='calendar' />}
+                            />
+                        }
 
-                            <Input
-                                multiline={true}
-                                textStyle={{ minHeight: 64 }}
-                                label={evaProps => <Text {...evaProps}>Notes</Text>}
-                                onChangeText={this.setNotes}
-                                {...this.state.reminderV.reminderName}
-                                style={styles.item} />
+                        <Timepicker
+                            label={evaProps => <Text {...evaProps}>Reminder Time</Text>}
+                            date={this.state.reminderV.reminderTime}
+                            onFocus={this.dismissKeyboard}
+                            style={styles.item}
+                            disabled={!this.insertMode}
+                            accessoryRight={(props) => <Icon {...props} name='clock' />}
+                            onSelect={this.setTime} />
 
+                        <Input
+                            multiline={true}
+                            disabled={!this.insertMode}
+                            textStyle={{ minHeight: 64 }}
+                            label={evaProps => <Text {...evaProps}>Notes</Text>}
+                            onChangeText={this.setNotes}
+                            {...this.state.reminderV.reminderName}
+                            style={styles.item} />
+
+                        {(this.insertMode) &&
                             <Button onPress={() => this.saveReminder()}>
                                 {evaProps => <Text {...evaProps}>Save</Text>}
                             </Button>
-                        </Layout>
-                    </TouchableWithoutFeedback>
+                        }
+                    </Layout>
                 </ScrollView>
             )
         }

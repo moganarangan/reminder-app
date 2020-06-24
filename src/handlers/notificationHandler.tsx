@@ -22,23 +22,9 @@ export default class NotificationHandler {
         console.log('ok! got your notification', JSON.stringify(notification.data));
     }
 
-    static showNotification = (reminder: string) => {
-        const localNotification: LocalNotification = {
-            title: 'done',
-            body: reminder,
-            data: {reminder}
-        };
-
-        const schedulingOptions = {
-            time: (new Date()).getTime() + 10
-        }
-
-        console.log('show notification');
-
-        // Notifications show only when app is not active.
-        // (ie. another app being used or device's screen is locked)
+    static showNotification = (localNotification: LocalNotification, options: any) => {
         Notifications.scheduleLocalNotificationAsync(
-            localNotification, schedulingOptions
+            localNotification, options
         );
     }
 }

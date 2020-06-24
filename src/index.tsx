@@ -21,6 +21,7 @@ import { ApplicationProvider, IconRegistry, TabBar, Tab, Text, Icon } from '@ui-
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { FeatherIconsPack } from "./utilities/feather-icons";
 import { MaterialIconsPack } from "./utilities/material-icons";
+import TaskHandler from "./handlers/taskHandler";
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -57,6 +58,7 @@ export default class App extends Component {
 
   async componentDidMount() {
     await NotificationHandler.askNotification();
+    TaskHandler.startBackGroundTask();
   }
 
   render() {

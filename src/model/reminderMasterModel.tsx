@@ -6,26 +6,24 @@ export interface reminderMasterModel {
 export interface reminder {
     reminderId: string,
     reminderName: string,
-    reminderType: number,
+    reminderType: number, // 1: Daily, 2:Monthly, 3: Specific Date
     reminderMonth: number,
     reminderDay: number,
     dueDate: Date,
     reminderTime: Date,
-    notes: string,
-    active: boolean,
-    isSync: boolean
+    notes: string
+    active: boolean;
 };
 
 export interface reminderActivity {
     reminderActivityId: string,
+    reminderId: string,
     reminderName: string,
-    reminderType: number,
+    reminderType: number, // 1: Daily, 2:Monthly, 3: Specific Date
     reminderMonth: number,
     reminderDay: number,
     dueDate: Date,
     reminderTime: Date,
-    nextDueDate: Date,
     notes: string,
-    completed: boolean,
-    isSync: boolean
+    completionDate: Date | null
 };
