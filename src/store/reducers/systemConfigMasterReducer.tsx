@@ -2,8 +2,7 @@ import { SystemConfig } from '../../model/systemConfig';
 import { EDIT_SYSTEM_CONFIG } from '../../constans/systemMaster';
 
 const Initial_State: SystemConfig = {
-    taskDateTime: null,
-    success: false
+    taskDateTime: null
 };
 
 // Reducers (Modifies The State And Returns A New State)

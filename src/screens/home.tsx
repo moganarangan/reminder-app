@@ -3,16 +3,21 @@ import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { Layout, Text } from '@ui-kitten/components';
+import { reminder } from '../model/reminder';
+import { reminderActivity } from '../model/reminderActivity';
 
 interface Props {
     navigation: any,
-    remindersActivity: Array<any>
+    reminders: Array<reminder>,
+    remindersActivity: Array<reminderActivity>
 }
 
 class Home extends Component<Props> {
 
     openNewReminder = () => {
-        this.props.navigation.navigate('NewReminder', {});
+        if (this.props.reminders && this.props.reminders.length < 8) {
+            this.props.navigation.navigate('NewReminder', {});
+        }
     }
 
     render() {
@@ -21,10 +26,11 @@ class Home extends Component<Props> {
 
                 <Text category='h5'>This is Home.</Text>
 
-                <FAB style={styles.fab}
-                    icon="plus"
-                    onPress={() => this.openNewReminder()}
-                />
+                {this.props.reminders.length < 8 &&
+                    <FAB style={styles.fab}
+                        icon="plus"
+                        onPress={() => this.openNewReminder()}
+                    />}
             </Layout>
         );
     }
@@ -35,6 +41,7 @@ const mapStateToProps = (state: any) => {
     console.log('Home map state', state);
     // Redux Store --> Component
     return {
+        reminders: state.reminderMaster.reminders,
         remindersActivity: state.reminderMaster.remindersActivity
     };
 };

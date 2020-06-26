@@ -4,8 +4,8 @@ import { reminder } from '../../model/reminder';
 import { reminderActivity } from '../../model/reminderActivity';
 
 const Initial_State: reminderMasterModel = {
-    reminders: new Array<reminder>(),
-    remindersActivity: new Array<reminderActivity>()
+    reminders: [],
+    remindersActivity: []
 };
 
 // Reducers (Modifies The State And Returns A New State)
@@ -22,7 +22,7 @@ const reminderMaster = (state: reminderMasterModel = Initial_State, action: any)
         case EDIT_REMINDER: {
             const index = state.reminders.findIndex(i => i.reminderId === action.editReminder.reminderId);
             return Object.assign({}, state, {
-                ...state, reminders: state.reminders.map((r, i) => {
+                ...state, reminders: state.reminders?.map((r, i) => {
                     i === index ? { ...r, r: action.editReminder } : r
                 })
             });
@@ -31,7 +31,7 @@ const reminderMaster = (state: reminderMasterModel = Initial_State, action: any)
         case EDIT_REMINDER_ACTIVITY: {
             const index = state.remindersActivity.findIndex(i => i.reminderActivityId === action.editReminderActivity.reminderActivityId);
             return Object.assign({}, state, {
-                ...state, remindersActivity: state.remindersActivity.map((r, i) => {
+                ...state, remindersActivity: state.remindersActivity?.map((r, i) => {
                     i === index ? { ...r, r: action.editReminderActivity } : r
                 })
             });

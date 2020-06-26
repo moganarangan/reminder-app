@@ -7,7 +7,8 @@ import systemConfigMaster from './reducers/systemConfigMasterReducer'
 
 const persistConfig = {
   key: 'root',
-  storage: AsyncStorage
+  storage: AsyncStorage,
+  whitelist: ['reminderMaster', 'systemConfigMaster']
 }
 
 const rootReducer = combineReducers({ reminderMaster, systemConfigMaster });

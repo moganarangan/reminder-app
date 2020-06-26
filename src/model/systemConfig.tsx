@@ -1,4 +1,3 @@
 export interface SystemConfig {
-    taskDateTime: Date | null,
-    success: boolean
+    taskDateTime?: Date | null
 }
