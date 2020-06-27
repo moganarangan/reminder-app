@@ -20,19 +20,30 @@ class Home extends Component<Props> {
         }
     }
 
+    openMore = () => {
+        this.props.navigation.navigate('More', {});
+    }
+
+    openReminders = () => {
+        this.props.navigation.navigate('RemindersMaster', {});
+    }
+
+    openActivities = () => {
+        this.props.navigation.navigate('RemindersActivityMaster', {});
+    }
+
     render() {
         return (
             <Layout style={styles.container}>
 
                 <Text category='h5'>This is Home.</Text>
-
                 {this.props.reminders.length < 8 &&
                     <FAB style={styles.fab}
                         icon="plus"
                         onPress={() => this.openNewReminder()}
                     />}
             </Layout>
-        );
+        )
     }
 }
 
@@ -57,7 +68,7 @@ const styles = StyleSheet.create({
     },
     fab: {
         position: 'absolute',
-        margin: 20,
+        margin: 15,
         right: 5,
         bottom: 5,
     }

@@ -12,17 +12,28 @@ TaskManager.defineTask(REMINDER_TASK_NAME, () => {
         const todayDate = today.getDate();
         let runDate: any;
         runDate = state.systemConfigMaster.taskDateTime?.getDate();
-        if (runDate && todayDate !== runDate) {
-            state.reminderMaster.reminders.forEach(async (r) => {
-                if (r.active) {
-                    ReminderHandler.addReminder(r, true);
+
+        console.log('executing background task: ===>', state);
+
+        if (runDate) {
+            if (todayDate !== runDate) {
+                if (state.reminderMaster.reminders && state.reminderMaster.reminders.length > 0) {
+                    TaskHandler.execute(state, today);
+                    return BackgroundFetch.Result.NewData;
+                } else {
+                    const sysConfig = state.systemConfigMaster;
+                    sysConfig.taskDateTime = today;
+                    store.dispatch(editSystemConfig(sysConfig));
+                    return BackgroundFetch.Result.NoData;
                 }
-            });
+            }
+        } else if (state.reminderMaster.reminders && state.reminderMaster.reminders.length > 0) {
+            TaskHandler.execute(state, today);
+            return BackgroundFetch.Result.NewData;
+        } else {
             const sysConfig = state.systemConfigMaster;
             sysConfig.taskDateTime = today;
             store.dispatch(editSystemConfig(sysConfig));
-            return BackgroundFetch.Result.NewData;
-        } else {
             return BackgroundFetch.Result.NoData;
         }
     }
@@ -41,22 +52,30 @@ export default class TaskHandler {
         });
     };
 
-    static runTask = () => {
+    static runTask() {
         const state = store.getState();
         const today = new Date();
         const todayDate = today.getDate();
         let runDate: any;
         runDate = state.systemConfigMaster.taskDateTime?.getDate();
 
-        if (runDate && todayDate !== runDate) {
-            state.reminderMaster.reminders.forEach(async (r) => {
-                if (r.active) {
-                    ReminderHandler.addReminder(r, true);
-                }
-            });
-            const sysConfig = state.systemConfigMaster;
-            sysConfig.taskDateTime = today;
-            store.dispatch(editSystemConfig(sysConfig));
+        if (runDate) {
+            if (todayDate !== runDate && state.reminderMaster.reminders && state.reminderMaster.reminders.length > 0) {
+                TaskHandler.execute(state, today);
+            }
+        } else if (state.reminderMaster.reminders && state.reminderMaster.reminders.length > 0) {
+            TaskHandler.execute(state, today);
         }
+    }
+
+    static execute(state: any, today: Date) {
+        state.reminderMaster.reminders.forEach(async (r: any) => {
+            if (r.active) {
+                ReminderHandler.addReminder(r, true);
+            }
+        });
+        const sysConfig = state.systemConfigMaster;
+        sysConfig.taskDateTime = today;
+        store.dispatch(editSystemConfig(sysConfig));
     }
 }

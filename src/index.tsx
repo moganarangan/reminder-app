@@ -1,11 +1,10 @@
 import React, { Component } from "react";
-import { Dimensions, SafeAreaView } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux'
 import { registerRootComponent } from 'expo';
+import SafeAreaView, { SafeAreaProvider } from 'react-native-safe-area-view';
 
 import NotificationHandler from './handlers/notificationHandler';
 import { store, persistor } from './store/configureStore';
@@ -14,44 +13,45 @@ import Home from './screens/home';
 import Configuration from './screens/configuration';
 import History from './screens/history';
 import NewReminder from './screens/newReminder';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import * as eva from '@eva-design/eva';
 import { default as mapping } from './utilities/mapping.json';
-import { ApplicationProvider, IconRegistry, TabBar, Tab, Text, Icon } from '@ui-kitten/components';
+import {
+  ApplicationProvider, IconRegistry, Text, Icon,
+  BottomNavigation, BottomNavigationTab
+} from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { FeatherIconsPack } from "./utilities/feather-icons";
 import { MaterialIconsPack } from "./utilities/material-icons";
 import TaskHandler from "./handlers/taskHandler";
 
-const initialLayout = { width: Dimensions.get('window').width };
-
-const AppTabNavigator = createMaterialTopTabNavigator();
+const { Navigator, Screen } = createBottomTabNavigator();
 const RootStack = createStackNavigator();
 
 function MainTabNavigator() {
   return (
-    <AppTabNavigator.Navigator initialRouteName="Home" initialLayout={initialLayout} style={{ backgroundColor: 'powderblue' }}
-      tabBar={(props: any) => <TopTabBar {...props} />}>
-      <AppTabNavigator.Screen name="Home" component={Home} />
-      <AppTabNavigator.Screen name="Configuration" component={Configuration} />
-      <AppTabNavigator.Screen name="History" component={History} />
-    </AppTabNavigator.Navigator >
+    <Navigator initialRouteName="Home" tabBar={(props: any) => <BottomTabBar  {...props} />} >
+      <Screen name="Home" component={Home} />
+      <Screen name="Configuration" component={Configuration} />
+      <Screen name="History" component={History} />
+    </Navigator >
   )
 }
 
-const TopTabBar = ({ navigation, state }: { navigation: any, state: any }) => (
-  <TabBar style={{ backgroundColor: 'powderblue' }}
-    selectedIndex={state.index}
-    onSelect={index => navigation.navigate(state.routeNames[index])}>
-    <Tab title={evaProps => <Text {...evaProps}>Home</Text>}
+const BottomTabBar = ({ navigation, state }: { navigation: any, state: any }) => (
+  <BottomNavigation selectedIndex={state.index} appearance='noIndicator'
+    onSelect={index => navigation.navigate(state.routeNames[index])}
+    style={{ borderStyle: 'solid', borderTopColor: '#eee', borderColor: '#fff', borderWidth: 1 }}>
+    <BottomNavigationTab title={evaProps => <Text {...evaProps}>Dashboard</Text>}
       icon={evaProps => <Icon {...evaProps} name='home' pack="material" />} />
 
-    <Tab title={evaProps => <Text {...evaProps}>Configuration</Text>}
+    <BottomNavigationTab title={evaProps => <Text {...evaProps}>Reminders</Text>}
       icon={evaProps => <Icon {...evaProps} name='settings' pack="material" />} />
 
-    <Tab title={evaProps => <Text {...evaProps}>History</Text>}
+    <BottomNavigationTab title={evaProps => <Text {...evaProps}>History</Text>}
       icon={evaProps => <Icon {...evaProps} name='history' pack="material" />} />
-  </TabBar>
+  </BottomNavigation>
 );
 
 export default class App extends Component {
@@ -68,20 +68,21 @@ export default class App extends Component {
         <ApplicationProvider {...eva} customMapping={mapping} theme={eva.light}>
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-              <SafeAreaView style={SafeAreaStyle.SafeArea}>
-                <NavigationContainer>
-                  <RootStack.Navigator mode='modal' initialRouteName='HomeMain' headerMode='screen' screenOptions={{ title: 'Reminder' }} >
-                    <RootStack.Screen name='HomeMain' component={MainTabNavigator} options={{ headerShown: false }} />
-                    <RootStack.Screen name="NewReminder" component={NewReminder}
-                      options={{
-                        headerStyle: {
-                          backgroundColor: 'powderblue'
-                        }
-                      }}
-                    />
-                  </RootStack.Navigator>
-                </NavigationContainer>
-              </SafeAreaView>
+              <SafeAreaProvider>
+                <SafeAreaView style={SafeAreaStyle.SafeArea}>
+                  <NavigationContainer>
+                    <RootStack.Navigator mode='modal' initialRouteName='HomeMain' headerMode='screen' >
+                      <RootStack.Screen name='HomeMain' component={MainTabNavigator} options={{ headerShown: false }} />
+                      <RootStack.Screen name="NewReminder" component={NewReminder}
+                        options={{
+                          headerStyle: { height: 60 },
+                          headerTitleStyle: { paddingBottom: 20 },
+                          headerLeftContainerStyle: { paddingBottom: 20 }
+                        }} />
+                    </RootStack.Navigator>
+                  </NavigationContainer>
+                </SafeAreaView>
+              </SafeAreaProvider>
             </PersistGate>
           </Provider>
         </ApplicationProvider>
