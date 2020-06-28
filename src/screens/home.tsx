@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Layout, Text } from '@ui-kitten/components';
 import { reminder } from '../model/reminder';
 import { reminderActivity } from '../model/reminderActivity';
+import { default as theme } from '../utilities/theme.json';
 
 interface Props {
     navigation: any,
@@ -40,6 +41,7 @@ class Home extends Component<Props> {
                 {this.props.reminders.length < 8 &&
                     <FAB style={styles.fab}
                         icon="plus"
+                        color="#ffffff"
                         onPress={() => this.openNewReminder()}
                     />}
             </Layout>
@@ -71,5 +73,6 @@ const styles = StyleSheet.create({
         margin: 15,
         right: 5,
         bottom: 5,
+        backgroundColor: theme["color-primary-500"]
     }
 });

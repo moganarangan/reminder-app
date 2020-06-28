@@ -25,6 +25,7 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { FeatherIconsPack } from "./utilities/feather-icons";
 import { MaterialIconsPack } from "./utilities/material-icons";
 import TaskHandler from "./handlers/taskHandler";
+import { default as theme } from './utilities/theme.json';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 const RootStack = createStackNavigator();
@@ -65,7 +66,7 @@ export default class App extends Component {
     return (
       <>
         <IconRegistry icons={[EvaIconsPack, FeatherIconsPack, MaterialIconsPack]} />
-        <ApplicationProvider {...eva} customMapping={mapping} theme={eva.light}>
+        <ApplicationProvider {...eva} customMapping={mapping} theme={{ ...eva.light, ...theme }}>
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
               <SafeAreaProvider>
@@ -74,11 +75,7 @@ export default class App extends Component {
                     <RootStack.Navigator mode='modal' initialRouteName='HomeMain' headerMode='screen' >
                       <RootStack.Screen name='HomeMain' component={MainTabNavigator} options={{ headerShown: false }} />
                       <RootStack.Screen name="NewReminder" component={NewReminder}
-                        options={{
-                          headerStyle: { height: 60 },
-                          headerTitleStyle: { paddingBottom: 20 },
-                          headerLeftContainerStyle: { paddingBottom: 20 }
-                        }} />
+                        options={{ headerShown: false }} />
                     </RootStack.Navigator>
                   </NavigationContainer>
                 </SafeAreaView>

@@ -20,11 +20,15 @@ export default class ReminderHandler {
                 break;
 
             case 2:
-                return ReminderHandler.processMonthlyReminder(reminder, isTask, raList);
+                ReminderHandler.processMonthlyReminder(reminder, isTask, raList);
                 break;
 
             case 3:
-                return ReminderHandler.processSpecificDateReminder(reminder, isTask, raList);
+                ReminderHandler.processYearlyReminder(reminder, isTask, raList);
+                break;
+
+            case 4:
+                ReminderHandler.processSpecificDateReminder(reminder, isTask, raList);
                 break;
         }
     }
@@ -80,7 +84,58 @@ export default class ReminderHandler {
         today.setHours(0);
         today.setMinutes(0);
         today.setMilliseconds(0);
-        const monthDate = new Date(today.getFullYear(), reminder.reminderMonth - 1, reminder.reminderDay);
+        const month = today.getMonth();
+        const monthDate = new Date(today.getFullYear(), month, reminder.reminderDay);
+
+        const diffTime = Math.abs(monthDate.getTime() - today.getTime());
+        const diffDays = Math.ceil(diffTime / one_day);
+
+        if (diffDays > 0 && diffDays <= 3) {
+            const h1 = reminder.reminderTime.getHours();
+            const m1 = reminder.reminderTime.getMinutes();
+            monthDate.setHours(h1);
+            monthDate.setMinutes(m1);
+            monthDate.setMilliseconds(0);
+
+            let canAdd: boolean = true;
+            if (isTask) {
+                const isExist = raList.filter(i => i.reminderId === reminder.reminderId && i.dueDate === monthDate);
+
+                if (isExist && isExist.length > 0) {
+                    canAdd = false;
+                }
+            }
+
+            if (canAdd) {
+                const ra1: reminderActivity = {
+                    reminderActivityId: getRandom(),
+                    reminderId: reminder.reminderId,
+                    reminderName: reminder.reminderName,
+                    reminderType: reminder.reminderType,
+                    reminderMonth: reminder.reminderMonth,
+                    reminderDay: reminder.reminderDay,
+                    dueDate: monthDate,
+                    reminderTime: reminder.reminderTime,
+                    notes: reminder.notes,
+                    completionDate: null
+                };
+
+                store.dispatch(addReminderActivity(ra1));
+                ReminderHandler.scheduleNotification(ra1);
+            }
+        }
+    }
+
+    private static async processYearlyReminder(reminder: reminder, isTask: boolean, raList: Array<reminderActivity>) {
+        if (!isTask) {
+            store.dispatch(addReminder(reminder));
+        }
+
+        const today = new Date();
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setMilliseconds(0);
+        const monthDate = new Date(today.getFullYear(), reminder.reminderMonth, reminder.reminderDay);
 
         const diffTime = Math.abs(monthDate.getTime() - today.getTime());
         const diffDays = Math.ceil(diffTime / one_day);
