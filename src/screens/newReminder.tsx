@@ -54,7 +54,7 @@ export default class NewReminder extends Component<Props, State> {
     loadReminder = (item: reminder) => {
         const year = item.dueDate.getFullYear();
         const month = item.dueDate.getMonth();
-        const count = new Date(year, month, 0).getDate();
+        const count = new Date(year, month - 1, 0).getDate();
         const days = Array.from(Array(count).keys(), (_, i) => i + 1);
 
         this.state = {
@@ -85,7 +85,7 @@ export default class NewReminder extends Component<Props, State> {
         tomorrow.setDate(tomorrow.getDate() + 1);
         var date = new Date();
         var year = date.getFullYear();
-        const count = new Date(year, 1, 0).getDate();
+        const count = new Date(year, 0, 0).getDate();
         const days = Array.from(Array(count).keys(), (_, i) => i + 1);
 
         this.state = {
@@ -130,7 +130,7 @@ export default class NewReminder extends Component<Props, State> {
     populateDays = (month: number) => {
         var date = new Date();
         var year = date.getFullYear();
-        const count = new Date(year, month, 0).getDate();
+        const count = new Date(year, month - 1, 0).getDate();
         const days = Array.from(Array(count).keys(), (_, i) => i + 1);
 
         this.setState({ days });

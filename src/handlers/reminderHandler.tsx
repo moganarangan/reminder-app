@@ -85,7 +85,7 @@ export default class ReminderHandler {
         today.setMinutes(0);
         today.setMilliseconds(0);
         const month = today.getMonth();
-        const monthDate = new Date(today.getFullYear(), month, reminder.reminderDay);
+        const monthDate = new Date(today.getFullYear(), month - 1, reminder.reminderDay);
 
         const diffTime = Math.abs(monthDate.getTime() - today.getTime());
         const diffDays = Math.ceil(diffTime / one_day);
@@ -135,7 +135,7 @@ export default class ReminderHandler {
         today.setHours(0);
         today.setMinutes(0);
         today.setMilliseconds(0);
-        const monthDate = new Date(today.getFullYear(), reminder.reminderMonth, reminder.reminderDay);
+        const monthDate = new Date(today.getFullYear(), reminder.reminderMonth - 1, reminder.reminderDay);
 
         const diffTime = Math.abs(monthDate.getTime() - today.getTime());
         const diffDays = Math.ceil(diffTime / one_day);
