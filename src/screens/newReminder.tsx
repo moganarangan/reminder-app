@@ -25,10 +25,8 @@ interface State {
 }
 
 const BackIcon = (props: any) => (
-    <Icon {...props} name='arrow-back' />
+    <Icon {...props} name='arrow-back' pack="material" />
 );
-
-
 
 export default class NewReminder extends Component<Props, State> {
     _isMounted = false;
@@ -337,7 +335,7 @@ export default class NewReminder extends Component<Props, State> {
                                     onFocus={this.dismissKeyboard}
                                     disabled={!this.insertMode}
                                     style={styles.item}
-                                    accessoryRight={(props) => <Icon {...props} name='calendar' />}
+                                    accessoryRight={(props) => <Icon {...props} name='calendar' pack="feather" />}
                                 />
                             }
 
@@ -347,7 +345,7 @@ export default class NewReminder extends Component<Props, State> {
                                 onFocus={this.dismissKeyboard}
                                 style={styles.item}
                                 disabled={!this.insertMode}
-                                accessoryRight={(props) => <Icon {...props} name='clock' />}
+                                accessoryRight={(props) => <Icon {...props} name='clock' pack="feather" />}
                                 onSelect={this.setTime} />
 
                             <Input

@@ -37,7 +37,8 @@ class Home extends Component<Props> {
         return (
             <Layout style={styles.container}>
 
-                <Text category='h5'>This is Home.</Text>
+                <Text category='h3'>Reminders</Text>
+
                 {this.props.reminders.length < 8 &&
                     <FAB style={styles.fab}
                         icon="plus"
@@ -65,8 +66,9 @@ export default connect(mapStateToProps, null)(Home);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
+        flexDirection: 'column',
+        padding: 10,
+        backgroundColor: theme['background-color']
     },
     fab: {
         position: 'absolute',

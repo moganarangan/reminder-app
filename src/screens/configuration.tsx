@@ -1,8 +1,10 @@
 import React from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import { Layout, Card, Text } from '@ui-kitten/components';
+import { Layout, Card, Text, Icon } from '@ui-kitten/components';
 import { reminder } from '../model/reminder';
+import moment from "moment";
+import { default as theme } from '../utilities/theme.json';
 
 interface Props {
     navigation: any,
@@ -10,18 +12,62 @@ interface Props {
 }
 
 class Configuration extends React.Component<Props> {
+    reminderTypes = ['Daily', 'Monthly', 'Yearly', 'Specific Date'];
+
+    getTime = (date: Date) => {
+        return moment(date).format('LT');
+    }
+
+    getSpecificDate = (date: Date) => {
+        return moment(date).format('dddd, MMMM Do yyyy');
+    }
+
+    getMonthName = (n: number) => {
+        return moment(n, 'MM').format('MMMM');
+    }
+
     render() {
         return (
             <Layout style={styles.container}>
+
+                <Text category='h3'>Reminders</Text>
+
                 <ScrollView>
                     {this.props.reminders.map((item) =>
                         <Card key={item.reminderId} style={styles.item}>
-                            <Text category='h6'>{item.reminderName}</Text>
-                            <Text category='s1'>{item.dueDate.toString()}</Text>
+
+                            <Layout style={styles.innerItem}>
+                                <Text category='h5'>{item.reminderName}</Text>
+                                <Text category='h6'>{this.reminderTypes[item.reminderType - 1]}</Text>
+                            </Layout>
+
+                            <Layout style={styles.row}>
+                                {(item.reminderType !== 1) &&
+                                    <Icon style={[styles.icon, styles.pr]} name='calendar' pack="feather" />
+                                }
+
+                                {(item.reminderType === 2) &&
+                                    <>
+                                        <Text category='s1'>{item.reminderDay}th</Text>
+                                    </>
+                                }
+                                {(item.reminderType === 3) &&
+                                    <>
+                                        <Text category='s1'>{this.getMonthName(item.reminderMonth)}</Text>
+                                        <Text style={styles.pls} category='s1'>{item.reminderDay}th</Text>
+                                    </>
+                                }
+                                {(item.reminderType === 4) && <Text category='s1'>{this.getSpecificDate(item.dueDate)}</Text>}
+
+                                <Layout style={[styles.row, item.reminderType !== 1 ? styles.pl : {}]}>
+                                    <Icon style={styles.icon} name='clock' pack="feather" />
+                                    <Text style={styles.pl} category='s1'>{this.getTime(item.reminderTime)}</Text>
+                                </Layout>
+                            </Layout>
                         </Card>
                     )}
                 </ScrollView>
-            </Layout>
+            </Layout >
         );
     }
 }
@@ -41,9 +87,32 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        padding: 10
+        padding: 10,
+        backgroundColor: theme['background-color']
     },
     item: {
         marginTop: 10
+    },
+    innerItem: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 15
+    },
+    row: {
+        flexDirection: 'row'
+    },
+    pr: {
+        paddingRight: 10
+    },
+    pl: {
+        paddingLeft: 10
+    },
+    pls: {
+        paddingLeft: 5
+    },
+    icon: {
+        height: 18,
+        tintColor: theme["color-primary-500"]
     }
 });
