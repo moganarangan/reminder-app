@@ -7,6 +7,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Spinner } from '@ui-kitten/components';
 import getRandom from '../utilities/random';
 import { reminder } from '../model/reminder';
+import moment from "moment";
 
 interface Props {
     navigation: any,
@@ -50,9 +51,8 @@ export default class NewReminder extends Component<Props, State> {
     }
 
     loadReminder = (item: reminder) => {
-        const year = item.dueDate.getFullYear();
-        const month = item.dueDate.getMonth();
-        const count = new Date(year, month - 1, 0).getDate();
+        const d = moment(item.dueDate);
+        const count = d.daysInMonth();
         const days = Array.from(Array(count).keys(), (_, i) => i + 1);
 
         this.state = {
@@ -79,11 +79,8 @@ export default class NewReminder extends Component<Props, State> {
     }
 
     generateReminder = () => {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        var date = new Date();
-        var year = date.getFullYear();
-        const count = new Date(year, 0, 0).getDate();
+        var d = moment().startOf('day');
+        const count = d.daysInMonth();
         const days = Array.from(Array(count).keys(), (_, i) => i + 1);
 
         this.state = {
@@ -93,8 +90,8 @@ export default class NewReminder extends Component<Props, State> {
                 reminderType: 1,
                 reminderMonth: 1,
                 reminderDay: 1,
-                dueDate: tomorrow,
-                reminderTime: tomorrow,
+                dueDate: d.toDate(),
+                reminderTime: d.add(5, 'minutes').toDate(),
                 notes: '',
                 active: true
             },
@@ -126,11 +123,9 @@ export default class NewReminder extends Component<Props, State> {
     }
 
     populateDays = (month: number) => {
-        var date = new Date();
-        var year = date.getFullYear();
-        const count = new Date(year, month - 1, 0).getDate();
+        var d = moment();
+        const count = d.daysInMonth();
         const days = Array.from(Array(count).keys(), (_, i) => i + 1);
-
         this.setState({ days });
     }
 

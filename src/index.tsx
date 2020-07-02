@@ -60,6 +60,7 @@ export default class App extends Component {
   async componentDidMount() {
     await NotificationHandler.askNotification();
     TaskHandler.startBackGroundTask();
+    TaskHandler.runTask();
   }
 
   render() {

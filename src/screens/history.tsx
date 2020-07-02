@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Layout, Card, Text, Icon } from '@ui-kitten/components';
 import { reminderActivity } from '../model/reminderActivity';
@@ -25,10 +25,12 @@ class History extends React.Component<Props> {
     render() {
         return (
             <Layout style={styles.container}>
-                
-                <Text category='h3'>Reminders</Text>
 
-                <ScrollView>
+                <View style={styles.title}>
+                    <Text category='h3'><Text style={styles.titleR} category='h3'>R</Text>eminders</Text>
+                </View>
+
+                <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
                     {this.props.ra.map((item) =>
                         <Card key={item.reminderActivityId} style={styles.item}>
 
@@ -68,7 +70,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        padding: 10,
+        padding: 20,
         backgroundColor: theme['background-color']
     },
     item: {
@@ -95,5 +97,12 @@ const styles = StyleSheet.create({
     icon: {
         height: 18,
         tintColor: theme["color-primary-500"]
+    },
+    title: {
+        alignItems: "center"
+    },
+    titleR: {
+        color: theme["color-primary-500"],
+        fontWeight: 'bold'
     }
 });

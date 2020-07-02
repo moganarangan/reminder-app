@@ -5,8 +5,8 @@ import getRandom from '../utilities/random';
 import { LocalNotification } from 'expo/build/Notifications/Notifications.types';
 import { reminder } from '../model/reminder';
 import { reminderActivity } from '../model/reminderActivity';
-
-const one_day = 1000 * 60 * 60 * 24;
+import { default as theme } from '../utilities/theme.json';
+import moment, { months } from "moment";
 
 export default class ReminderHandler {
     static addReminder(newReminder: reminder, isTask: boolean = false, raList: Array<reminderActivity> = []) {
@@ -38,19 +38,21 @@ export default class ReminderHandler {
             store.dispatch(addReminder(reminder));
         }
 
-        const today = new Date();
-        today.setHours(0);
-        today.setMinutes(0);
-        today.setMilliseconds(0);
-        const h = reminder.reminderTime.getHours();
-        const m = reminder.reminderTime.getMinutes();
-        today.setHours(h);
-        today.setMinutes(m);
-        today.setMilliseconds(0);
+        const today = moment();
+        const d = moment(reminder.reminderTime);
+        const h = d.hour();
+        const m = d.minute();
+        today.set({
+            hour: h,
+            minute: m,
+            second: 0,
+            millisecond: 0
+        });
 
         let canAdd: boolean = true;
         if (isTask) {
-            const isExist = raList.filter(i => i.reminderId === reminder.reminderId && i.dueDate === today);
+            const isExist = raList.filter(i => i.reminderId === reminder.reminderId
+                && moment(i.dueDate).toISOString() === today.toISOString());
 
             if (isExist && isExist.length > 0) {
                 canAdd = false;
@@ -65,7 +67,7 @@ export default class ReminderHandler {
                 reminderType: reminder.reminderType,
                 reminderMonth: reminder.reminderMonth,
                 reminderDay: reminder.reminderDay,
-                dueDate: today,
+                dueDate: today.toDate(),
                 reminderTime: reminder.reminderTime,
                 notes: reminder.notes,
                 completionDate: null
@@ -80,26 +82,33 @@ export default class ReminderHandler {
             store.dispatch(addReminder(reminder));
         }
 
-        const today = new Date();
-        today.setHours(0);
-        today.setMinutes(0);
-        today.setMilliseconds(0);
-        const month = today.getMonth();
-        const monthDate = new Date(today.getFullYear(), month - 1, reminder.reminderDay);
+        const today = moment().startOf('day');
+        const dateString = today.year() + '-' + today.month() + '-' + reminder.reminderDay;
+        const monthDate = moment(dateString);
+        monthDate.set({
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0
+        });
 
-        const diffTime = Math.abs(monthDate.getTime() - today.getTime());
-        const diffDays = Math.ceil(diffTime / one_day);
+        const d = moment(reminder.reminderTime);
+        const h = d.hour();
+        const m = d.minute();
+        monthDate.set({
+            hour: h,
+            minute: m,
+            second: 0,
+            millisecond: 0
+        });
 
-        if (diffDays > 0 && diffDays <= 3) {
-            const h1 = reminder.reminderTime.getHours();
-            const m1 = reminder.reminderTime.getMinutes();
-            monthDate.setHours(h1);
-            monthDate.setMinutes(m1);
-            monthDate.setMilliseconds(0);
+        const diffHours = monthDate.diff(today, 'hour');
 
+        if (diffHours <= 72) {
             let canAdd: boolean = true;
             if (isTask) {
-                const isExist = raList.filter(i => i.reminderId === reminder.reminderId && i.dueDate === monthDate);
+                const isExist = raList.filter(i => i.reminderId === reminder.reminderId
+                    && moment(i.dueDate).toISOString() === monthDate.toISOString());
 
                 if (isExist && isExist.length > 0) {
                     canAdd = false;
@@ -107,21 +116,21 @@ export default class ReminderHandler {
             }
 
             if (canAdd) {
-                const ra1: reminderActivity = {
+                const ra: reminderActivity = {
                     reminderActivityId: getRandom(),
                     reminderId: reminder.reminderId,
                     reminderName: reminder.reminderName,
                     reminderType: reminder.reminderType,
                     reminderMonth: reminder.reminderMonth,
                     reminderDay: reminder.reminderDay,
-                    dueDate: monthDate,
+                    dueDate: monthDate.toDate(),
                     reminderTime: reminder.reminderTime,
                     notes: reminder.notes,
                     completionDate: null
                 };
 
-                store.dispatch(addReminderActivity(ra1));
-                ReminderHandler.scheduleNotification(ra1);
+                store.dispatch(addReminderActivity(ra));
+                ReminderHandler.scheduleNotification(ra);
             }
         }
     }
@@ -131,25 +140,32 @@ export default class ReminderHandler {
             store.dispatch(addReminder(reminder));
         }
 
-        const today = new Date();
-        today.setHours(0);
-        today.setMinutes(0);
-        today.setMilliseconds(0);
-        const monthDate = new Date(today.getFullYear(), reminder.reminderMonth - 1, reminder.reminderDay);
+        const today = moment().startOf('day');
+        const dateString = today.year() + '-' + reminder.reminderMonth + '-' + reminder.reminderDay;
+        const monthDate = moment(dateString);
+        monthDate.set({
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0
+        });
+        const d = moment(reminder.reminderTime);
+        const h = d.hour();
+        const m = d.minute();
+        monthDate.set({
+            hour: h,
+            minute: m,
+            second: 0,
+            millisecond: 0
+        });
 
-        const diffTime = Math.abs(monthDate.getTime() - today.getTime());
-        const diffDays = Math.ceil(diffTime / one_day);
+        const diffHours = monthDate.diff(today, 'hour');
 
-        if (diffDays > 0 && diffDays <= 3) {
-            const h1 = reminder.reminderTime.getHours();
-            const m1 = reminder.reminderTime.getMinutes();
-            monthDate.setHours(h1);
-            monthDate.setMinutes(m1);
-            monthDate.setMilliseconds(0);
-
+        if (diffHours <= 72) {
             let canAdd: boolean = true;
             if (isTask) {
-                const isExist = raList.filter(i => i.reminderId === reminder.reminderId && i.dueDate === monthDate);
+                const isExist = raList.filter(i => i.reminderId === reminder.reminderId
+                    && moment(i.dueDate).toISOString() === monthDate.toISOString());
 
                 if (isExist && isExist.length > 0) {
                     canAdd = false;
@@ -157,21 +173,21 @@ export default class ReminderHandler {
             }
 
             if (canAdd) {
-                const ra1: reminderActivity = {
+                const ra: reminderActivity = {
                     reminderActivityId: getRandom(),
                     reminderId: reminder.reminderId,
                     reminderName: reminder.reminderName,
                     reminderType: reminder.reminderType,
                     reminderMonth: reminder.reminderMonth,
                     reminderDay: reminder.reminderDay,
-                    dueDate: monthDate,
+                    dueDate: monthDate.toDate(),
                     reminderTime: reminder.reminderTime,
                     notes: reminder.notes,
                     completionDate: null
                 };
 
-                store.dispatch(addReminderActivity(ra1));
-                ReminderHandler.scheduleNotification(ra1);
+                store.dispatch(addReminderActivity(ra));
+                ReminderHandler.scheduleNotification(ra);
             }
         }
     }
@@ -181,25 +197,24 @@ export default class ReminderHandler {
             store.dispatch(addReminder(reminder));
         }
 
-        const today = new Date();
-        today.setHours(0);
-        today.setMinutes(0);
-        today.setMilliseconds(0);
-        const dueDate = reminder.dueDate;
+        const today = moment().startOf('day');
+        const dueDate = moment(reminder.dueDate);
+        const d = moment(reminder.reminderTime);
+        const h = d.hour();
+        const m = d.minute();
+        dueDate.set({
+            hour: h,
+            minute: m,
+            second: 0,
+            millisecond: 0
+        });
+        const diffHours = dueDate.diff(today, 'hour');
 
-        const diffTime = Math.abs(dueDate.getTime() - today.getTime());
-        const diffDays = Math.ceil(diffTime / one_day);
-
-        if (diffDays > 0 && diffDays <= 3) {
-            const h2 = reminder.reminderTime.getHours();
-            const m2 = reminder.reminderTime.getMinutes();
-            dueDate.setHours(h2);
-            dueDate.setMinutes(m2);
-            dueDate.setMilliseconds(0);
-
+        if (diffHours <= 72) {
             let canAdd: boolean = true;
             if (isTask) {
-                const isExist = raList.filter(i => i.reminderId === reminder.reminderId && i.dueDate === dueDate);
+                const isExist = raList.filter(i => i.reminderId === reminder.reminderId
+                    && moment(i.dueDate).toISOString() === dueDate.toISOString());
 
                 if (isExist && isExist.length > 0) {
                     canAdd = false;
@@ -207,21 +222,21 @@ export default class ReminderHandler {
             }
 
             if (canAdd) {
-                const ra2: reminderActivity = {
+                const ra: reminderActivity = {
                     reminderActivityId: getRandom(),
                     reminderId: reminder.reminderId,
                     reminderName: reminder.reminderName,
                     reminderType: reminder.reminderType,
                     reminderMonth: reminder.reminderMonth,
                     reminderDay: reminder.reminderDay,
-                    dueDate: dueDate,
+                    dueDate: dueDate.toDate(),
                     reminderTime: reminder.reminderTime,
                     notes: reminder.notes,
                     completionDate: null
                 };
 
-                store.dispatch(addReminderActivity(ra2));
-                ReminderHandler.scheduleNotification(ra2);
+                store.dispatch(addReminderActivity(ra));
+                ReminderHandler.scheduleNotification(ra);
             }
         }
     }
@@ -230,18 +245,23 @@ export default class ReminderHandler {
         const localNotification: LocalNotification = {
             title: 'Reminder',
             body: ra.reminderName,
-            data: { reminderActivityId: ra.reminderActivityId }
+            data: { reminderActivityId: ra.reminderActivityId },
+            ios: {
+                sound: true,
+                _displayInForeground: true
+            },
+            android: {
+                color: theme["color-primary-500"]
+            }
         };
 
-        const scheduleTime = new Date(ra.dueDate);
-        scheduleTime.setMinutes(scheduleTime.getMinutes() - 10);
+        const scheduleTime = moment(ra.dueDate);
+        scheduleTime.set({ minute: -10 });
         NotificationHandler.showNotification(localNotification, { time: scheduleTime });
 
-
-        const now = new Date();
-        now.setSeconds(scheduleTime.getSeconds() + 10);
-        const diffTime = Math.abs(scheduleTime.getTime() - now.getTime());
-        const diffDays = Math.ceil(diffTime / one_day);
+        const now = moment()
+        now.set({ second: 10 });
+        const diffDays = now.diff(scheduleTime, 'days');
 
         if (diffDays > 3) {
             NotificationHandler.showNotification(localNotification, { time: scheduleTime });
