@@ -1,14 +1,19 @@
 import { store } from '../store/configureStore';
-import { addReminder, addReminderActivity } from '../store/actions/reminderAction';
+import { addReminder, addReminderActivity, editReminder } from '../store/actions/reminderAction';
 import NotificationHandler from './notificationHandler';
 import getRandom from '../utilities/random';
 import { LocalNotification } from 'expo/build/Notifications/Notifications.types';
 import { reminder } from '../model/reminder';
 import { reminderActivity } from '../model/reminderActivity';
 import { default as theme } from '../utilities/theme.json';
-import moment, { months } from "moment";
+import moment from "moment";
 
 export default class ReminderHandler {
+
+    static saveReminder(reminder: reminder) {
+        store.dispatch(editReminder(reminder));
+    }
+
     static addReminder(newReminder: reminder, isTask: boolean = false, raList: Array<reminderActivity> = []) {
         ReminderHandler.calculateNextReminder(newReminder, isTask, raList);
     }
@@ -261,9 +266,9 @@ export default class ReminderHandler {
 
         const now = moment()
         now.set({ second: 10 });
-        const diffDays = now.diff(scheduleTime, 'days');
+        const diffHours = scheduleTime.diff(now, 'hour');
 
-        if (diffDays > 3) {
+        if (diffHours >= 24) {
             NotificationHandler.showNotification(localNotification, { time: scheduleTime });
         }
     }

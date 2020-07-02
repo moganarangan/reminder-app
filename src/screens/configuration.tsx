@@ -14,6 +14,10 @@ interface Props {
 class Configuration extends React.Component<Props> {
     reminderTypes = ['Daily', 'Monthly', 'Yearly', 'Specific Date'];
 
+    openReminder = (r: reminder) => {
+        this.props.navigation.navigate('NewReminder', { item: r });
+    }
+
     getTime = (date: Date) => {
         return moment(date).format('LT');
     }
@@ -36,7 +40,7 @@ class Configuration extends React.Component<Props> {
 
                 <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
                     {this.props.reminders.map((item) =>
-                        <Card key={item.reminderId} style={styles.item}>
+                        <Card key={item.reminderId} style={styles.item} onPress={() => this.openReminder(item)}>
 
                             <Layout style={styles.innerItem}>
                                 <Text category='h5'>{item.reminderName}</Text>

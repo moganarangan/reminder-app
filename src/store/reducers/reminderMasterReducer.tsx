@@ -12,41 +12,61 @@ const Initial_State: reminderMasterModel = {
 const reminderMaster = (state: reminderMasterModel = Initial_State, action: any): reminderMasterModel => {
     switch (action.type) {
         case ADD_REMINDER: {
-            return Object.assign({}, state, { reminders: [...state.reminders, action.newReminder] });
+            return { ...state, reminders: [...state.reminders, action.newReminder] };
         }
 
         case ADD_REMINDER_ACTIVITY: {
-            return Object.assign({}, state, { remindersActivity: [...state.remindersActivity, action.addReminderActivity] });
+            return { ...state, remindersActivity: [...state.remindersActivity, action.addReminderActivity] };
         }
 
         case EDIT_REMINDER: {
-            const index = state.reminders.findIndex(i => i.reminderId === action.editReminder.reminderId);
-            return Object.assign({}, state, {
-                ...state, reminders: state.reminders?.map((r, i) => {
-                    i === index ? { ...r, r: action.editReminder } : r
-                })
-            });
+            return {
+                ...state,
+                reminders: state.reminders.map(r => r.reminderId === action.editReminder.reminderId ?
+                    {
+                        ...r,
+                        reminderName: action.editReminder.reminderName,
+                        reminderType: action.editReminder.reminderType,
+                        reminderMonth: action.editReminder.reminderMonth,
+                        reminderDay: action.editReminder.reminderDay,
+                        dueDate: action.editReminder.dueDate,
+                        reminderTime: action.editReminder.reminderTime,
+                        notes: action.editReminder.notes,
+                        active: action.editReminder.active
+                    } : r)
+            };
         }
 
         case EDIT_REMINDER_ACTIVITY: {
-            const index = state.remindersActivity.findIndex(i => i.reminderActivityId === action.editReminderActivity.reminderActivityId);
-            return Object.assign({}, state, {
-                ...state, remindersActivity: state.remindersActivity?.map((r, i) => {
-                    i === index ? { ...r, r: action.editReminderActivity } : r
-                })
-            });
+            return {
+                ...state,
+                remindersActivity: state.remindersActivity.map(r => r.reminderActivityId === action.editReminderActivity.reminderActivityId ?
+                    {
+                        ...r,
+                        reminderName: action.editReminderActivity.reminderName,
+                        reminderType: action.editReminderActivity.reminderType,
+                        reminderMonth: action.editReminderActivity.reminderMonth,
+                        reminderDay: action.editReminderActivity.reminderDay,
+                        dueDate: action.editReminderActivity.dueDate,
+                        reminderTime: action.editReminderActivity.reminderTime,
+                        notes: action.editReminderActivity.notes,
+                        completionDate: action.editReminderActivity.completionDate
+                    } : r)
+            };
         }
 
         case DELETE_REMINDER: {
-            return Object.assign({}, state, {
-                ...state, reminders: [...state.reminders.filter(i => i.reminderId !== action.deleteReminder.reminderId)]
-            });
+            return {
+                ...state,
+                reminders: [...state.reminders.filter(i => i.reminderId !== action.deleteReminder.reminderId)]
+            };
         }
 
         case DELETE_REMINDER_ACTIVITY: {
-            return Object.assign({}, state, {
-                ...state, remindersActivity: [...state.remindersActivity.filter(i => i.reminderActivityId !== action.deleteReminder.reminderActivityId)]
-            });
+            return {
+                ...state,
+                remindersActivity: [...state.remindersActivity.filter(i => i.reminderActivityId !== action.deleteReminderActivity.reminderActivityId)]
+            };
         }
 
         // Default

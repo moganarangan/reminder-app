@@ -55,6 +55,9 @@ export default class NewReminder extends Component<Props, State> {
         const count = d.daysInMonth();
         const days = Array.from(Array(count).keys(), (_, i) => i + 1);
 
+        item.dueDate = d.toDate();
+        item.reminderTime = moment(item.reminderTime).toDate();
+
         this.state = {
             reminderV: item,
             loading: true,
@@ -212,7 +215,7 @@ export default class NewReminder extends Component<Props, State> {
                 this.state.reminderV.reminderId = getRandom();
                 ReminderHandler.addReminder(this.state.reminderV);
             } else {
-                ReminderHandler.addReminder(this.state.reminderV);
+                ReminderHandler.saveReminder(this.state.reminderV);
             }
 
             this.goBack();
@@ -270,7 +273,7 @@ export default class NewReminder extends Component<Props, State> {
                                 label={evaProps => <Text {...evaProps}>Reminder name</Text>}
                                 onChangeText={this.setName}
                                 style={styles.item}
-                                {...this.state.reminderV.reminderName}
+                                value={this.state.reminderV.reminderName}
                                 status={this.state.nameStatus}
                                 caption={this.state.nameCaption}
                                 disabled={!this.insertMode}
@@ -349,7 +352,7 @@ export default class NewReminder extends Component<Props, State> {
                                 textStyle={{ minHeight: 64 }}
                                 label={evaProps => <Text {...evaProps}>Notes</Text>}
                                 onChangeText={this.setNotes}
-                                {...this.state.reminderV.reminderName}
+                                value={this.state.reminderV.notes}
                                 style={styles.item} />
 
                             {(this.insertMode) &&
