@@ -39,6 +39,10 @@ class Home extends Component<Props, State> {
         }
     }
 
+    openReminderActivity = (ra: reminderActivity) => {
+        this.props.navigation.navigate('ReminderActivity', { item: ra });
+    }
+
     splitReminders = () => {
         const t = moment().startOf('day');
         const d = t.day();
@@ -80,7 +84,7 @@ class Home extends Component<Props, State> {
                         {(this.state && this.state.today.length > 0) && <Text>Today</Text>}
 
                         {this.state && this.state.today.map((item) =>
-                            <Card key={item.reminderActivityId} style={styles.item}>
+                            <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
 
                                 <Layout style={styles.innerItem}>
                                     <Text category='h5'>{item.reminderName}</Text>
@@ -102,7 +106,7 @@ class Home extends Component<Props, State> {
                     <View>
                         {(this.state && this.state.overdue.length > 0) && <Text>Overdue</Text>}
                         {this.state && this.state.overdue.map((item) =>
-                            <Card key={item.reminderActivityId} style={styles.item}>
+                            <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
 
                                 <Layout style={styles.innerItem}>
                                     <Text category='h5'>{item.reminderName}</Text>
@@ -124,7 +128,7 @@ class Home extends Component<Props, State> {
                     <View>
                         {(this.state && this.state.upcoming.length > 0) && <Text>Upcoming</Text>}
                         {this.state && this.state.upcoming.map((item) =>
-                            <Card key={item.reminderActivityId} style={styles.item}>
+                            <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
 
                                 <Layout style={styles.innerItem}>
                                     <Text category='h5'>{item.reminderName}</Text>

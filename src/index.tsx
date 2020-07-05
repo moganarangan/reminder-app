@@ -26,6 +26,7 @@ import { FeatherIconsPack } from "./utilities/feather-icons";
 import { MaterialIconsPack } from "./utilities/material-icons";
 import TaskHandler from "./handlers/taskHandler";
 import { default as theme } from './utilities/theme.json';
+import ReminderActivity from "./screens/reminderActivity";
 
 const { Navigator, Screen } = createBottomTabNavigator();
 const RootStack = createStackNavigator();
@@ -75,8 +76,8 @@ export default class App extends Component {
                   <NavigationContainer>
                     <RootStack.Navigator mode='modal' initialRouteName='HomeMain' headerMode='screen' >
                       <RootStack.Screen name='HomeMain' component={MainTabNavigator} options={{ headerShown: false }} />
-                      <RootStack.Screen name="NewReminder" component={NewReminder}
-                        options={{ headerShown: false }} />
+                      <RootStack.Screen name="NewReminder" component={NewReminder} options={{ headerShown: false }} />
+                      <RootStack.Screen name="ReminderActivity" component={ReminderActivity} options={{ headerShown: false }} />
                     </RootStack.Navigator>
                   </NavigationContainer>
                 </SafeAreaView>

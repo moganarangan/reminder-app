@@ -1,5 +1,5 @@
 import { store } from '../store/configureStore';
-import { addReminder, addReminderActivity, editReminder } from '../store/actions/reminderAction';
+import { addReminder, addReminderActivity, editReminder, editReminderActivity } from '../store/actions/reminderAction';
 import NotificationHandler from './notificationHandler';
 import getRandom from '../utilities/random';
 import { LocalNotification } from 'expo/build/Notifications/Notifications.types';
@@ -12,6 +12,10 @@ export default class ReminderHandler {
 
     static saveReminder(reminder: reminder) {
         store.dispatch(editReminder(reminder));
+    }
+
+    static saveReminderActivity(reminderA: reminderActivity) {
+        store.dispatch(editReminderActivity(reminderA));
     }
 
     static addReminder(newReminder: reminder, isTask: boolean = false, raList: Array<reminderActivity> = []) {
@@ -75,7 +79,7 @@ export default class ReminderHandler {
                 dueDate: today.toDate(),
                 reminderTime: reminder.reminderTime,
                 notes: reminder.notes,
-                completionDate: null
+                completionDate: undefined
             };
             store.dispatch(addReminderActivity(ra));
             ReminderHandler.scheduleNotification(ra);
@@ -131,7 +135,7 @@ export default class ReminderHandler {
                     dueDate: monthDate.toDate(),
                     reminderTime: reminder.reminderTime,
                     notes: reminder.notes,
-                    completionDate: null
+                    completionDate: undefined
                 };
 
                 store.dispatch(addReminderActivity(ra));
@@ -188,7 +192,7 @@ export default class ReminderHandler {
                     dueDate: monthDate.toDate(),
                     reminderTime: reminder.reminderTime,
                     notes: reminder.notes,
-                    completionDate: null
+                    completionDate: undefined
                 };
 
                 store.dispatch(addReminderActivity(ra));
@@ -237,7 +241,7 @@ export default class ReminderHandler {
                     dueDate: dueDate.toDate(),
                     reminderTime: reminder.reminderTime,
                     notes: reminder.notes,
-                    completionDate: null
+                    completionDate: undefined
                 };
 
                 store.dispatch(addReminderActivity(ra));

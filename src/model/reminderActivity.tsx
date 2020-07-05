@@ -8,5 +8,5 @@ export interface reminderActivity {
     dueDate: Date,
     reminderTime: Date,
     notes: string,
-    completionDate: Date | null
+    completionDate: Date | undefined
 };

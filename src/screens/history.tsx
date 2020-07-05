@@ -22,6 +22,10 @@ class History extends React.Component<Props> {
         return moment(date).format('dddd, MMMM Do yyyy');
     }
 
+    openReminderActivity = (ra: reminderActivity) => {
+        this.props.navigation.navigate('ReminderActivity', { item: ra });
+    }
+
     render() {
         return (
             <Layout style={styles.container}>
@@ -32,7 +36,7 @@ class History extends React.Component<Props> {
 
                 <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
                     {this.props.ra.map((item) =>
-                        <Card key={item.reminderActivityId} style={styles.item}>
+                        <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
 
                             <Layout style={styles.innerItem}>
                                 <Text category='h5'>{item.reminderName}</Text>
