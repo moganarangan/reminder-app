@@ -26,6 +26,7 @@ import {
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { FeatherIconsPack } from "./utilities/feather-icons";
 import { MaterialIconsPack } from "./utilities/material-icons";
+import { MaterialCommunityIconsPack } from "./utilities/material-community-icons";
 import TaskHandler from "./handlers/taskHandler";
 import { default as theme } from './utilities/theme.json';
 import ReminderActivity from "./screens/reminderActivity";
@@ -54,7 +55,7 @@ const BottomTabBar = ({ navigation, state }: { navigation: any, state: any }) =>
   <BottomNavigation selectedIndex={state.index} appearance='noIndicator'
     onSelect={index => navigation.navigate(state.routeNames[index])}
     style={{ borderStyle: 'solid', borderTopColor: '#eee', borderColor: '#fff', borderWidth: 1 }}>
-    <BottomNavigationTab title={evaProps => <Text {...evaProps}>Dashboard</Text>}
+    <BottomNavigationTab title={evaProps => <Text {...evaProps}>Home</Text>}
       icon={evaProps => <Icon {...evaProps} name='home' pack="material" />} />
 
     <BottomNavigationTab title={evaProps => <Text {...evaProps}>Reminders</Text>}
@@ -88,7 +89,7 @@ export default class App extends Component {
     }
     return (
       <>
-        <IconRegistry icons={[EvaIconsPack, FeatherIconsPack, MaterialIconsPack]} />
+        <IconRegistry icons={[EvaIconsPack, FeatherIconsPack, MaterialIconsPack, MaterialCommunityIconsPack]} />
         <ApplicationProvider {...eva} customMapping={mapping} theme={{ ...eva.light, ...theme }}>
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>

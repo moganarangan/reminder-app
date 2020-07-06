@@ -83,7 +83,9 @@ export default class ReminderHandler {
                 dueDate: today.toDate(),
                 reminderTime: reminder.reminderTime,
                 notes: reminder.notes,
-                completionDate: undefined
+                completionDate: undefined,
+                color: reminder.color,
+                last_updated: reminder.last_updated
             };
             store.dispatch(addReminderActivity(ra));
             ReminderHandler.scheduleNotification(ra);
@@ -139,7 +141,9 @@ export default class ReminderHandler {
                     dueDate: monthDate.toDate(),
                     reminderTime: reminder.reminderTime,
                     notes: reminder.notes,
-                    completionDate: undefined
+                    completionDate: undefined,
+                    color: reminder.color,
+                    last_updated: reminder.last_updated
                 };
 
                 store.dispatch(addReminderActivity(ra));
@@ -196,7 +200,9 @@ export default class ReminderHandler {
                     dueDate: monthDate.toDate(),
                     reminderTime: reminder.reminderTime,
                     notes: reminder.notes,
-                    completionDate: undefined
+                    completionDate: undefined,
+                    color: reminder.color,
+                    last_updated: reminder.last_updated
                 };
 
                 store.dispatch(addReminderActivity(ra));
@@ -245,7 +251,9 @@ export default class ReminderHandler {
                     dueDate: dueDate.toDate(),
                     reminderTime: reminder.reminderTime,
                     notes: reminder.notes,
-                    completionDate: undefined
+                    completionDate: undefined,
+                    color: reminder.color,
+                    last_updated: reminder.last_updated
                 };
 
                 store.dispatch(addReminderActivity(ra));

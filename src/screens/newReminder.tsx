@@ -41,7 +41,7 @@ const CancelIcon = (props: any) => (
 );
 
 const DeleteIcon = (props: any) => (
-    <Icon {...props} style={[styles.icon, styles.danger]} name='delete' pack="material" />
+    <Icon {...props} style={[styles.icon, styles.danger]} name='delete-outline' pack="materialCommunity" />
 );
 
 export default class NewReminder extends Component<Props, State> {
@@ -114,7 +114,9 @@ export default class NewReminder extends Component<Props, State> {
                 dueDate: d.toDate(),
                 reminderTime: d.toDate(),
                 notes: '',
-                active: true
+                active: true,
+                color: '',
+                last_updated: d.toDate()
             },
             reminderTypes: [{ store: 1, value: 'Daily' }, { store: 2, value: 'Monthly' }, { store: 3, value: 'Yearly' }, { store: 4, value: 'Specific Date' }],
             months: [{ store: 1, value: 'January' }
@@ -238,8 +240,10 @@ export default class NewReminder extends Component<Props, State> {
         if (this.validate(this.state.reminderV.reminderName)) {
             if (this.state.insertMode && !this.state.reminderV.reminderId) {
                 this.state.reminderV.reminderId = getRandom();
+                this.state.reminderV.last_updated = moment().toDate();
                 ReminderHandler.addReminder(this.state.reminderV);
             } else {
+                this.state.reminderV.last_updated = moment().toDate();
                 ReminderHandler.saveReminder(this.state.reminderV);
             }
 
@@ -429,7 +433,7 @@ export default class NewReminder extends Component<Props, State> {
                         <Input
                             multiline={true}
                             disabled={!this.state.insertMode}
-                            textStyle={{ minHeight: 64 }}
+                            textStyle={{ minHeight: 90 }}
                             label={evaProps => <Text {...evaProps}
                                 style={[styles.pb, styles.label, !this.state.insertMode ? styles.labelDisabled : null]}>Notes</Text>}
                             onChangeText={this.setNotes}

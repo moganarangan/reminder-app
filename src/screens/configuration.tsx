@@ -33,7 +33,7 @@ class Configuration extends React.Component<Props> {
 
     render() {
         return (
-            <Layout style={styles.container}>
+            <Layout style={[styles.container, this.props.reminders.length === 0 ? styles.centre : null]}>
 
                 <View style={styles.title}>
                     <Text category='h3'><Text style={styles.titleR} category='h3'>R</Text>eminders</Text>
@@ -74,6 +74,12 @@ class Configuration extends React.Component<Props> {
                         </Card>
                     )}
                 </ScrollView>
+
+                {this.props.reminders.length === 0 &&
+                    <Text style={{ flex: 2, alignItems: 'center', justifyContent: 'center', textAlign: 'center', paddingLeft: 15, paddingTop: 40, paddingRight: 15 }}
+                        category='h5' appearance='hint'>
+                        Add new reminders by pressing + icon in Home.
+                    </Text>}
             </Layout >
         );
     }
@@ -99,6 +105,10 @@ const styles = StyleSheet.create({
     },
     item: {
         marginTop: 10
+    },
+    centre: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     innerItem: {
         flex: 1,

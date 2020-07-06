@@ -8,4 +8,6 @@ export interface reminder {
     reminderTime: Date,
     notes: string
     active: boolean;
+    color: string;
+    last_updated: Date;
 };

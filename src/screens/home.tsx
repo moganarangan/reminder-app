@@ -43,7 +43,7 @@ class Home extends Component<Props> {
 
     render() {
         return (
-            <Layout style={styles.container}>
+            <Layout style={[styles.container, this.props.rCount === 0 ? styles.centre : null]}>
 
                 <View style={styles.title}>
                     <Text category='h3'><Text style={styles.titleR} category='h3'>R</Text>eminders</Text>
@@ -52,9 +52,10 @@ class Home extends Component<Props> {
                 <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
                     <View style={styles.pb}>
 
-                        {(this.props && this.props.today.length > 0) && <Text>Today</Text>}
+                        {(this.props && this.props.today.length > 0) && <Text category='h5'
+                            style={[styles.heading]}>Today</Text>}
 
-                        {this.props && this.props.today.map((item) =>
+                        {(this.props && this.props.today.length > 0) && this.props.today.map((item) =>
                             <Card key={item.reminderActivityId} style={[styles.item, styles.card]} onPress={() => this.openReminderActivity(item)}>
 
                                 <Layout style={styles.innerItem}>
@@ -63,11 +64,11 @@ class Home extends Component<Props> {
                                 </Layout>
 
                                 <Layout style={styles.row}>
-                                    <Icon style={[styles.icon, styles.pr]} name='calendar' pack="feather" />
+                                    <Icon style={[styles.icon, styles.pr, item.completionDate ? styles.success : null]} name='calendar' pack="feather" />
                                     <Text category='s1'>{this.getSpecificDate(item.dueDate)}</Text>
 
 
-                                    <Icon style={[styles.icon, styles.pl, styles.pr]} name='clock' pack="feather" />
+                                    <Icon style={[styles.icon, styles.pl, styles.pr, item.completionDate ? styles.success : null]} name='clock' pack="feather" />
                                     <Text category='s1'>{this.getTime(item.reminderTime)}</Text>
                                 </Layout>
                             </Card>
@@ -75,7 +76,8 @@ class Home extends Component<Props> {
                     </View>
 
                     <View style={styles.pb}>
-                        {(this.props && this.props.overdue.length > 0) && <Text>Overdue</Text>}
+                        {(this.props && this.props.overdue.length > 0) && <Text category='h5'
+                            style={[styles.heading]}>Overdue</Text>}
                         {this.props && this.props.overdue.map((item) =>
                             <Card key={item.reminderActivityId} style={[styles.item, styles.card]} onPress={() => this.openReminderActivity(item)}>
 
@@ -85,11 +87,11 @@ class Home extends Component<Props> {
                                 </Layout>
 
                                 <Layout style={styles.row}>
-                                    <Icon style={[styles.icon, styles.pr]} name='calendar' pack="feather" />
+                                    <Icon style={[styles.icon, styles.pr, styles.danger]} name='calendar' pack="feather" />
                                     <Text category='s1'>{this.getSpecificDate(item.dueDate)}</Text>
 
 
-                                    <Icon style={[styles.icon, styles.pl, styles.pr]} name='clock' pack="feather" />
+                                    <Icon style={[styles.icon, styles.pl, styles.pr, styles.danger]} name='clock' pack="feather" />
                                     <Text category='s1'>{this.getTime(item.reminderTime)}</Text>
                                 </Layout>
                             </Card>
@@ -97,7 +99,8 @@ class Home extends Component<Props> {
                     </View>
 
                     <View>
-                        {(this.props && this.props.upcoming.length > 0) && <Text>Upcoming</Text>}
+                        {(this.props && this.props.upcoming.length > 0) && <Text category='h5'
+                            style={[styles.heading]}>Upcoming</Text>}
                         {this.props && this.props.upcoming.map((item) =>
                             <Card key={item.reminderActivityId} style={[styles.item, styles.card]} onPress={() => this.openReminderActivity(item)}>
 
@@ -107,11 +110,13 @@ class Home extends Component<Props> {
                                 </Layout>
 
                                 <Layout style={styles.row}>
-                                    <Icon style={[styles.icon, styles.pr]} name='calendar' pack="feather" />
+                                    <Icon style={[styles.icon, styles.pr, styles.warning,
+                                    item.completionDate ? styles.success : null]} name='calendar' pack="feather" />
                                     <Text category='s1'>{this.getSpecificDate(item.dueDate)}</Text>
 
 
-                                    <Icon style={[styles.icon, styles.pl, styles.pr]} name='clock' pack="feather" />
+                                    <Icon style={[styles.icon, styles.pl, styles.pr, styles.warning,
+                                    item.completionDate ? styles.success : null]} name='clock' pack="feather" />
                                     <Text category='s1'>{this.getTime(item.reminderTime)}</Text>
                                 </Layout>
                             </Card>
@@ -119,7 +124,13 @@ class Home extends Component<Props> {
                     </View>
                 </ScrollView>
 
-                {this.props.rCount && this.props.rCount < 8 &&
+                {this.props.rCount === 0 &&
+                    <Text style={{ flex: 2, alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
+                        category='h5' appearance='hint'>
+                        Add new reminders by pressing + icon below.
+                    </Text>}
+
+                {this.props.rCount < 8 &&
                     <FAB style={styles.fab}
                         icon="plus"
                         color="#ffffff"
@@ -151,6 +162,10 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         padding: 20,
         backgroundColor: theme['color-basic-200']
+    },
+    centre: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     fab: {
         position: 'absolute',
@@ -197,5 +212,17 @@ const styles = StyleSheet.create({
     card: {
         borderColor: theme['color-basic-300'],
         borderRadius: 10
+    },
+    heading: {
+        fontFamily: 'Roboto-Light'
+    },
+    warning: {
+        tintColor: theme["color-warning-500"]
+    },
+    success: {
+        tintColor: theme["color-success-500"]
+    },
+    danger: {
+        tintColor: theme["color-danger-500"]
     }
 });

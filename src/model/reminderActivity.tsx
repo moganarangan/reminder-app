@@ -8,5 +8,7 @@ export interface reminderActivity {
     dueDate: Date,
     reminderTime: Date,
     notes: string,
-    completionDate: Date | undefined
+    completionDate: Date | undefined;
+    color: string;
+    last_updated: Date;
 };

@@ -5,11 +5,13 @@ import { Layout, Card, Text, Icon } from '@ui-kitten/components';
 import { reminderActivity } from '../model/reminderActivity';
 import moment from "moment";
 import { default as theme } from '../utilities/theme.json';
-import { getHistoryReminders } from '../selectors';
+import { getHistoryReminders, getUpcomingDashboardActivities, getOverdueDashboardActivities } from '../selectors';
 
 interface Props {
     navigation: any,
-    ra: Array<reminderActivity>
+    ra: Array<reminderActivity>,
+    overdue: Array<reminderActivity>,
+    upcoming: Array<reminderActivity>
 }
 
 class History extends React.Component<Props> {
@@ -29,7 +31,7 @@ class History extends React.Component<Props> {
 
     render() {
         return (
-            <Layout style={styles.container}>
+            <Layout style={[styles.container, this.props.ra.length === 0 ? styles.centre : null]}>
 
                 <View style={styles.title}>
                     <Text category='h3'><Text style={styles.titleR} category='h3'>R</Text>eminders</Text>
@@ -45,16 +47,29 @@ class History extends React.Component<Props> {
                             </Layout>
 
                             <Layout style={styles.row}>
-                                <Icon style={[styles.icon, styles.pr]} name='calendar' pack="feather" />
+                                <Icon style={[styles.icon, styles.pr,
+                                this.props.overdue.findIndex(i => i.reminderActivityId === item.reminderActivityId) > -1 ? styles.danger : null,
+                                this.props.upcoming.findIndex(i => i.reminderActivityId === item.reminderActivityId) > -1 ? styles.warning : null,
+                                item.completionDate ? styles.success : null
+                                ]} name='calendar' pack="feather" />
                                 <Text category='s1'>{this.getSpecificDate(item.dueDate)}</Text>
 
 
-                                <Icon style={[styles.icon, styles.pl, styles.pr]} name='clock' pack="feather" />
+                                <Icon style={[styles.icon, styles.pl, styles.pr,
+                                this.props.overdue.findIndex(i => i.reminderActivityId === item.reminderActivityId) > -1 ? styles.danger : null,
+                                this.props.upcoming.findIndex(i => i.reminderActivityId === item.reminderActivityId) > -1 ? styles.warning : null,
+                                item.completionDate ? styles.success : null]} name='clock' pack="feather" />
                                 <Text category='s1'>{this.getTime(item.reminderTime)}</Text>
                             </Layout>
                         </Card>
                     )}
                 </ScrollView>
+
+                {this.props.ra.length === 0 &&
+                    <Text style={{ flex: 2, alignItems: 'center', justifyContent: 'center', textAlign: 'center', paddingLeft: 15, paddingTop: 40, paddingRight: 15 }}
+                        category='h5' appearance='hint'>
+                        Add new reminders by pressing + icon in Home.
+                    </Text>}
             </Layout>
         );
     }
@@ -64,7 +79,9 @@ class History extends React.Component<Props> {
 const mapStateToProps = (state: any) => {
     // Redux Store --> Component
     return {
-        ra: getHistoryReminders(state)
+        ra: getHistoryReminders(state),
+        upcoming: getUpcomingDashboardActivities(state),
+        overdue: getOverdueDashboardActivities(state),
     };
 };
 
@@ -77,6 +94,10 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         padding: 20,
         backgroundColor: theme['color-basic-200']
+    },
+    centre: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     item: {
         marginTop: 10
@@ -113,5 +134,14 @@ const styles = StyleSheet.create({
     card: {
         borderColor: theme['color-basic-300'],
         borderRadius: 10
+    },
+    warning: {
+        tintColor: theme["color-warning-500"]
+    },
+    success: {
+        tintColor: theme["color-success-500"]
+    },
+    danger: {
+        tintColor: theme["color-danger-500"]
     }
 });

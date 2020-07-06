@@ -32,7 +32,9 @@ const reminderMaster = (state: reminderMasterModel = Initial_State, action: any)
                         dueDate: action.editReminder.dueDate,
                         reminderTime: action.editReminder.reminderTime,
                         notes: action.editReminder.notes,
-                        active: action.editReminder.active
+                        active: action.editReminder.active,
+                        color: action.editReminder.color,
+                        last_updated: action.editReminder.last_updated
                     } : r)
             };
         }
@@ -50,7 +52,9 @@ const reminderMaster = (state: reminderMasterModel = Initial_State, action: any)
                         dueDate: action.editReminderActivity.dueDate,
                         reminderTime: action.editReminderActivity.reminderTime,
                         notes: action.editReminderActivity.notes,
-                        completionDate: action.editReminderActivity.completionDate
+                        completionDate: action.editReminderActivity.completionDate,
+                        color: action.editReminderActivity.color,
+                        last_updated: action.editReminderActivity.last_updated
                     } : r)
             };
         }

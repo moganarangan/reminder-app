@@ -62,6 +62,7 @@ export default class ReminderActivity extends Component<Props, State> {
 
     saveReminderActivity = async () => {
         if (this.validate(this.state.reminderA.completionDate)) {
+            this.state.reminderA.last_updated = moment().toDate();
             ReminderHandler.saveReminderActivity(this.state.reminderA);
             this.goBack();
         }
@@ -154,7 +155,8 @@ export default class ReminderActivity extends Component<Props, State> {
                         </Layout>
 
                         <Datepicker
-                            label={evaProps => <Text {...evaProps}>Completion Date</Text>}
+                            label={evaProps => <Text {...evaProps}
+                                style={[styles.pbs, styles.label]}>Completion Date</Text>}
                             date={this.state.reminderA.completionDate}
                             onSelect={this.onCompletionDateChange}
                             onFocus={this.dismissKeyboard}
@@ -168,8 +170,9 @@ export default class ReminderActivity extends Component<Props, State> {
                         <Input
                             multiline={true}
                             disabled={!this.edit}
-                            textStyle={{ minHeight: 64 }}
-                            label={evaProps => <Text {...evaProps}>Notes</Text>}
+                            textStyle={{ minHeight: 90 }}
+                            label={evaProps => <Text {...evaProps}
+                                style={[styles.pbs, styles.label]}>Notes</Text>}
                             onChangeText={this.setNotes}
                             value={this.state.reminderA.notes}
                             style={styles.item} />
@@ -225,5 +228,13 @@ const styles = StyleSheet.create({
     },
     headerTitle: {
         fontSize: 18
-    }
+    },
+    label: {
+        fontSize: theme['text-label-font-size'],
+        fontWeight: theme["text-label-font-weight"],
+        color: theme['color-basic-600'],
+    },
+    pbs: {
+        paddingBottom: 4
+    },
 });
