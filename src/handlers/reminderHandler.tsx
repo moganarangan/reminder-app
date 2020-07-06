@@ -1,5 +1,5 @@
 import { store } from '../store/configureStore';
-import { addReminder, addReminderActivity, editReminder, editReminderActivity } from '../store/actions/reminderAction';
+import { addReminder, addReminderActivity, editReminder, editReminderActivity, deleteReminder } from '../store/actions/reminderAction';
 import NotificationHandler from './notificationHandler';
 import getRandom from '../utilities/random';
 import { LocalNotification } from 'expo/build/Notifications/Notifications.types';
@@ -16,6 +16,10 @@ export default class ReminderHandler {
 
     static saveReminderActivity(reminderA: reminderActivity) {
         store.dispatch(editReminderActivity(reminderA));
+    }
+
+    static deleteReminder(reminder: reminder) {
+        store.dispatch(deleteReminder(reminder));
     }
 
     static addReminder(newReminder: reminder, isTask: boolean = false, raList: Array<reminderActivity> = []) {

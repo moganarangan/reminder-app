@@ -134,14 +134,14 @@ export default class ReminderActivity extends Component<Props, State> {
 
                 <Layout style={styles.reminderContainer}>
                     <ScrollView>
-
+                    
                         <View style={styles.title}>
                             <Text style={[styles.name]} category='h4'>{this.state.reminderA.reminderName}</Text>
                         </View>
 
                         <Layout style={[styles.row, styles.item]}>
                             <Icon style={[styles.icon, styles.pr]} name='refresh-ccw' pack="feather" />
-                            <Text>{this.reminderTypes[this.state.reminderA.reminderType - 1]}</Text>
+                            <Text category='s1'>{this.reminderTypes[this.state.reminderA.reminderType - 1]}</Text>
                         </Layout>
 
                         <Layout style={[styles.row, styles.item, styles.pb]}>
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     icon: {
-        height: 18,
+        fontSize: 18,
         tintColor: theme["color-primary-500"]
     },
     pr: {
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
         paddingLeft: 10
     },
     pb: {
-        paddingBottom: 20
+        paddingBottom: 30
     },
     title: {
         alignItems: "center"

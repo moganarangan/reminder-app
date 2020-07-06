@@ -5,6 +5,7 @@ import { Layout, Card, Text, Icon } from '@ui-kitten/components';
 import { reminderActivity } from '../model/reminderActivity';
 import moment from "moment";
 import { default as theme } from '../utilities/theme.json';
+import { getHistoryReminders } from '../selectors';
 
 interface Props {
     navigation: any,
@@ -63,7 +64,7 @@ class History extends React.Component<Props> {
 const mapStateToProps = (state: any) => {
     // Redux Store --> Component
     return {
-        ra: state.reminderMaster.remindersActivity
+        ra: getHistoryReminders(state)
     };
 };
 

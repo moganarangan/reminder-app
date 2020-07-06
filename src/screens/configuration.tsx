@@ -5,6 +5,7 @@ import { Layout, Card, Text, Icon } from '@ui-kitten/components';
 import { reminder } from '../model/reminder';
 import moment from "moment";
 import { default as theme } from '../utilities/theme.json';
+import { getConfigReminders } from '../selectors';
 
 interface Props {
     navigation: any,
@@ -82,7 +83,7 @@ class Configuration extends React.Component<Props> {
 const mapStateToProps = (state: any) => {
     // Redux Store --> Component
     return {
-        reminders: state.reminderMaster.reminders
+        reminders: getConfigReminders(state)
     };
 };
 

@@ -3,63 +3,34 @@ import { StyleSheet, View, ScrollView } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { Layout, Text, Card, Icon } from '@ui-kitten/components';
-import { reminder } from '../model/reminder';
 import { reminderActivity } from '../model/reminderActivity';
 import { default as theme } from '../utilities/theme.json';
 import moment from "moment";
 
+import {
+    getTodayDashboardActivities, getUpcomingDashboardActivities,
+    getOverdueDashboardActivities, getRemindersCount
+} from '../selectors';
+
 interface Props {
     navigation: any,
-    reminders: Array<reminder>,
-    remindersActivity: Array<reminderActivity>
-}
-
-interface State {
     today: Array<reminderActivity>;
     upcoming: Array<reminderActivity>;
     overdue: Array<reminderActivity>;
+    rCount: number;
 }
 
-class Home extends Component<Props, State> {
+class Home extends Component<Props> {
     reminderTypes = ['Daily', 'Monthly', 'Yearly', 'Specific Date'];
 
-    componentDidMount() {
-        this.splitReminders();
-    }
-
-    componentDidUpdate(prevProps: Props) {
-        if (prevProps.remindersActivity.length !== this.props.remindersActivity.length) {
-            this.splitReminders();
-        }
-    }
-
     openNewReminder = () => {
-        if (this.props.reminders && this.props.reminders.length < 8) {
+        if (this.props.rCount && this.props.rCount < 8) {
             this.props.navigation.navigate('NewReminder', {});
         }
     }
 
     openReminderActivity = (ra: reminderActivity) => {
         this.props.navigation.navigate('ReminderActivity', { item: ra });
-    }
-
-    splitReminders = () => {
-        const t = moment().startOf('day');
-        const d = t.day();
-        const m = t.month();
-        const y = t.year();
-
-        const today = this.props.remindersActivity.filter(i =>
-            moment(i.dueDate).month() === m && moment(i.dueDate).day() === d && moment(i.dueDate).year() === y);
-        this.setState({ today });
-
-        const upcoming = this.props.remindersActivity.filter(i =>
-            moment(i.dueDate).diff(t, 'days') >= 1);
-        this.setState({ upcoming });
-
-        const overdue = this.props.remindersActivity.filter(i => i.completionDate === null &&
-            moment(i.dueDate).diff(t, 'days') < 0);
-        this.setState({ overdue });
     }
 
     getTime = (date: Date) => {
@@ -79,11 +50,33 @@ class Home extends Component<Props, State> {
                 </View>
 
                 <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-                    <View>
+                    <View style={styles.pb}>
 
-                        {(this.state && this.state.today.length > 0) && <Text>Today</Text>}
+                        {(this.props && this.props.today.length > 0) && <Text>Today</Text>}
 
-                        {this.state && this.state.today.map((item) =>
+                        {this.props && this.props.today.map((item) =>
+                            <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
+
+                                <Layout style={styles.innerItem}>
+                                    <Text category='h5'>{item.reminderName}</Text>
+                                    <Text category='h6'>{this.reminderTypes[item.reminderType - 1]}</Text>
+                                </Layout>
+
+                                <Layout style={styles.row}>
+                                    <Icon style={[styles.icon, styles.pr]} name='calendar' pack="feather" />
+                                    <Text category='s1'>{this.getSpecificDate(item.dueDate)}</Text>
+
+
+                                    <Icon style={[styles.icon, styles.pl, styles.pr]} name='clock' pack="feather" />
+                                    <Text category='s1'>{this.getTime(item.reminderTime)}</Text>
+                                </Layout>
+                            </Card>
+                        )}
+                    </View>
+
+                    <View style={styles.pb}>
+                        {(this.props && this.props.overdue.length > 0) && <Text>Overdue</Text>}
+                        {this.props && this.props.overdue.map((item) =>
                             <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
 
                                 <Layout style={styles.innerItem}>
@@ -104,30 +97,8 @@ class Home extends Component<Props, State> {
                     </View>
 
                     <View>
-                        {(this.state && this.state.overdue.length > 0) && <Text>Overdue</Text>}
-                        {this.state && this.state.overdue.map((item) =>
-                            <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
-
-                                <Layout style={styles.innerItem}>
-                                    <Text category='h5'>{item.reminderName}</Text>
-                                    <Text category='h6'>{this.reminderTypes[item.reminderType - 1]}</Text>
-                                </Layout>
-
-                                <Layout style={styles.row}>
-                                    <Icon style={[styles.icon, styles.pr]} name='calendar' pack="feather" />
-                                    <Text category='s1'>{this.getSpecificDate(item.dueDate)}</Text>
-
-
-                                    <Icon style={[styles.icon, styles.pl, styles.pr]} name='clock' pack="feather" />
-                                    <Text category='s1'>{this.getTime(item.reminderTime)}</Text>
-                                </Layout>
-                            </Card>
-                        )}
-                    </View>
-
-                    <View>
-                        {(this.state && this.state.upcoming.length > 0) && <Text>Upcoming</Text>}
-                        {this.state && this.state.upcoming.map((item) =>
+                        {(this.props && this.props.upcoming.length > 0) && <Text>Upcoming</Text>}
+                        {this.props && this.props.upcoming.map((item) =>
                             <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
 
                                 <Layout style={styles.innerItem}>
@@ -148,7 +119,7 @@ class Home extends Component<Props, State> {
                     </View>
                 </ScrollView>
 
-                {this.props.reminders.length < 8 &&
+                {this.props.rCount && this.props.rCount < 8 &&
                     <FAB style={styles.fab}
                         icon="plus"
                         color="#ffffff"
@@ -164,8 +135,10 @@ const mapStateToProps = (state: any) => {
     console.log('Home map state', state);
     // Redux Store --> Component
     return {
-        reminders: state.reminderMaster.reminders,
-        remindersActivity: state.reminderMaster.remindersActivity
+        today: getTodayDashboardActivities(state),
+        upcoming: getUpcomingDashboardActivities(state),
+        overdue: getOverdueDashboardActivities(state),
+        rCount: getRemindersCount(state)
     };
 };
 
@@ -217,5 +190,8 @@ const styles = StyleSheet.create({
     titleR: {
         color: theme["color-primary-500"],
         fontWeight: 'bold'
+    },
+    pb: {
+        paddingBottom: 20
     }
 });

@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
-import { StyleSheet, Keyboard } from 'react-native';
+import { StyleSheet, Keyboard, View, Alert } from 'react-native';
 import ReminderHandler from "../handlers/reminderHandler";
 import {
     Input, Text, Select, SelectItem, Datepicker, Icon,
-    Button, Layout, Divider, TopNavigation, TopNavigationAction
+    Button, Layout, Divider, TopNavigation, TopNavigationAction, Toggle
 } from '@ui-kitten/components';
 import Timepicker from '../utilities/time-picker.component';
 import { ScrollView } from 'react-native-gesture-handler';
 import getRandom from '../utilities/random';
 import { reminder } from '../model/reminder';
 import moment from "moment";
+import { default as theme } from '../utilities/theme.json';
 
 interface Props {
     navigation: any,
@@ -23,16 +24,28 @@ interface State {
     days: Array<number>,
     nameCaption: string,
     nameStatus: string,
-    monthlyDays: Array<number>
+    monthlyDays: Array<number>,
+    insertMode: boolean
 }
 
 const BackIcon = (props: any) => (
     <Icon {...props} name='arrow-back' pack="material" />
 );
 
+const EditIcon = (props: any) => (
+    <Icon {...props} name='edit' pack="material" />
+);
+
+const CancelIcon = (props: any) => (
+    <Icon {...props} name='cancel' pack="material" />
+);
+
+const DeleteIcon = (props: any) => (
+    <Icon {...props} name='delete' pack="material" />
+);
+
 export default class NewReminder extends Component<Props, State> {
     _isMounted = false;
-    insertMode = true;
     title: string = '';
 
     constructor(props: Props) {
@@ -41,12 +54,10 @@ export default class NewReminder extends Component<Props, State> {
         const { item } = this.props.route.params;
         if (item) {
             this.title = 'Edit Reminder';
-            this.insertMode = false;
             this.loadReminder(item);
         }
         else {
             this.title = 'Add Reminder';
-            this.insertMode = true;
             this.generateReminder();
         }
     }
@@ -77,7 +88,8 @@ export default class NewReminder extends Component<Props, State> {
             days: days,
             monthlyDays: Array.from(Array(20).keys(), (_, i) => i + 1),
             nameCaption: '',
-            nameStatus: 'basic'
+            nameStatus: 'basic',
+            insertMode: false
         }
     }
 
@@ -120,7 +132,8 @@ export default class NewReminder extends Component<Props, State> {
             days: days,
             monthlyDays: Array.from(Array(20).keys(), (_, i) => i + 1),
             nameCaption: '',
-            nameStatus: 'basic'
+            nameStatus: 'basic',
+            insertMode: true
         }
     }
 
@@ -212,9 +225,18 @@ export default class NewReminder extends Component<Props, State> {
         }));
     }
 
+    onActiveChange = (active: boolean) => {
+        this.setState(prevState => ({
+            reminderV: {
+                ...prevState.reminderV,
+                active: active
+            }
+        }));
+    }
+
     saveReminder = async () => {
         if (this.validate(this.state.reminderV.reminderName)) {
-            if (this.insertMode) {
+            if (this.state.insertMode) {
                 this.state.reminderV.reminderId = getRandom();
                 ReminderHandler.addReminder(this.state.reminderV);
             } else {
@@ -249,8 +271,50 @@ export default class NewReminder extends Component<Props, State> {
         Keyboard.dismiss();
     }
 
+    edit = () => {
+        this.setState(prevState => ({
+            ...prevState,
+            insertMode: !prevState.insertMode
+        }));
+    }
+
     backAction = () => (
         <TopNavigationAction icon={BackIcon} onPress={this.goBack} />
+    );
+
+
+    confirmDelete = () => Alert.alert(
+        "",
+        "Are you sure want to delete reminder.",
+        [
+            {
+                text: "Cancel",
+                style: "cancel"
+            },
+            { text: "OK", onPress: () => this.delete }
+        ],
+        { cancelable: false }
+    );
+
+    delete = () => {
+        ReminderHandler.deleteReminder(this.state.reminderV);
+        this.goBack();
+    }
+
+    editAction = () => (
+        <React.Fragment>
+            < TopNavigationAction icon={DeleteIcon} onPress={this.confirmDelete} style={styles.pr} />
+
+            {this.state.insertMode ?
+                < TopNavigationAction icon={CancelIcon} onPress={this.edit} style={styles.pr} />
+                :
+                <TopNavigationAction icon={EditIcon} onPress={this.edit} style={styles.pr} />
+            }
+        </React.Fragment>
+    );
+
+    empty = () => (
+        <></>
     );
 
     render() {
@@ -259,11 +323,23 @@ export default class NewReminder extends Component<Props, State> {
                 <TopNavigation
                     title={this.title}
                     accessoryLeft={this.backAction}
-                />
+                    accessoryRight={this.state.reminderV.reminderId ? this.editAction : this.empty} />
                 <Divider />
 
                 <Layout style={styles.reminderContainer}>
                     <ScrollView>
+
+                        {(this.state.reminderV.reminderId !== '' && this.state.reminderV.reminderId !== null) &&
+                            <View style={[styles.row, styles.item]}>
+                                <Text appearance='hint' category='label' style={[styles.label, styles.pt]}>
+                                    {this.state.reminderV.active ? 'Active' : 'In-Active'}
+                                </Text>
+                                <Toggle
+                                    checked={this.state.reminderV.active}
+                                    disabled={!this.state.insertMode}
+                                    onChange={this.onActiveChange} />
+                            </View>}
+
                         <Input
                             label={evaProps => <Text {...evaProps}>Reminder name</Text>}
                             onChangeText={this.setName}
@@ -271,7 +347,7 @@ export default class NewReminder extends Component<Props, State> {
                             value={this.state.reminderV.reminderName}
                             status={this.state.nameStatus}
                             caption={this.state.nameCaption}
-                            disabled={!this.insertMode}
+                            disabled={!this.state.insertMode}
                         />
 
                         <Select
@@ -279,7 +355,7 @@ export default class NewReminder extends Component<Props, State> {
                             value={this.state.reminderTypes[this.state.reminderTypes.findIndex(i => i.store === this.state.reminderV.reminderType)].value}
                             onSelect={this.setReminderType}
                             onFocus={this.dismissKeyboard}
-                            disabled={!this.insertMode}
+                            disabled={!this.state.insertMode}
                             style={styles.item}>
                             {this.state.reminderTypes.map((item) => <SelectItem key={item.store} title={evaProps => <Text {...evaProps}>{item.value}</Text>} />)}
                         </Select>
@@ -290,7 +366,7 @@ export default class NewReminder extends Component<Props, State> {
                                 value={this.state.months[this.state.months.findIndex(i => i.store === this.state.reminderV.reminderMonth)].value}
                                 onSelect={this.setReminderMonth}
                                 onFocus={this.dismissKeyboard}
-                                disabled={!this.insertMode}
+                                disabled={!this.state.insertMode}
                                 style={styles.item}>
                                 {this.state.months.map((item) => <SelectItem key={item.store} title={evaProps => <Text {...evaProps}>{item.value}</Text>} />)}
                             </Select>
@@ -302,7 +378,7 @@ export default class NewReminder extends Component<Props, State> {
                                 value={this.state.reminderV.reminderDay}
                                 onSelect={this.setReminderDay}
                                 onFocus={this.dismissKeyboard}
-                                disabled={!this.insertMode}
+                                disabled={!this.state.insertMode}
                                 style={styles.item}>
                                 {this.state.days.map((item) => <SelectItem key={item} title={evaProps => <Text {...evaProps}>{item}</Text>} />)}
                             </Select>
@@ -314,7 +390,7 @@ export default class NewReminder extends Component<Props, State> {
                                 value={this.state.reminderV.reminderDay}
                                 onSelect={this.setMonthlyReminderDay}
                                 onFocus={this.dismissKeyboard}
-                                disabled={!this.insertMode}
+                                disabled={!this.state.insertMode}
                                 style={styles.item}>
                                 {this.state.monthlyDays.map((item) => <SelectItem key={item} title={evaProps => <Text {...evaProps}>{item}</Text>} />)}
                             </Select>
@@ -326,7 +402,7 @@ export default class NewReminder extends Component<Props, State> {
                                 date={this.state.reminderV.dueDate}
                                 onSelect={this.onReminderDateChange}
                                 onFocus={this.dismissKeyboard}
-                                disabled={!this.insertMode}
+                                disabled={!this.state.insertMode}
                                 style={styles.item}
                                 accessoryRight={(props) => <Icon {...props} name='calendar' pack="feather" />}
                             />
@@ -337,20 +413,20 @@ export default class NewReminder extends Component<Props, State> {
                             date={this.state.reminderV.reminderTime}
                             onFocus={this.dismissKeyboard}
                             style={styles.item}
-                            disabled={!this.insertMode}
+                            disabled={!this.state.insertMode}
                             accessoryRight={(props) => <Icon {...props} name='clock' pack="feather" />}
                             onSelect={this.setTime} />
 
                         <Input
                             multiline={true}
-                            disabled={!this.insertMode}
+                            disabled={!this.state.insertMode}
                             textStyle={{ minHeight: 64 }}
                             label={evaProps => <Text {...evaProps}>Notes</Text>}
                             onChangeText={this.setNotes}
                             value={this.state.reminderV.notes}
                             style={styles.item} />
 
-                        {(this.insertMode) &&
+                        {(this.state.insertMode) &&
                             <Button onPress={() => this.saveReminder()}>
                                 {evaProps => <Text {...evaProps}>Save</Text>}
                             </Button>
@@ -373,5 +449,18 @@ const styles = StyleSheet.create({
     },
     item: {
         paddingBottom: 15
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    pt: {
+        paddingTop: 8
+    },
+    label: {
+        fontWeight: theme['text-label-font-weight']
+    },
+    pr: {
+        paddingRight: 10
     }
 });
