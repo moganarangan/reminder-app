@@ -55,7 +55,7 @@ class Home extends Component<Props> {
                         {(this.props && this.props.today.length > 0) && <Text>Today</Text>}
 
                         {this.props && this.props.today.map((item) =>
-                            <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
+                            <Card key={item.reminderActivityId} style={[styles.item, styles.card]} onPress={() => this.openReminderActivity(item)}>
 
                                 <Layout style={styles.innerItem}>
                                     <Text category='h5'>{item.reminderName}</Text>
@@ -77,7 +77,7 @@ class Home extends Component<Props> {
                     <View style={styles.pb}>
                         {(this.props && this.props.overdue.length > 0) && <Text>Overdue</Text>}
                         {this.props && this.props.overdue.map((item) =>
-                            <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
+                            <Card key={item.reminderActivityId} style={[styles.item, styles.card]} onPress={() => this.openReminderActivity(item)}>
 
                                 <Layout style={styles.innerItem}>
                                     <Text category='h5'>{item.reminderName}</Text>
@@ -99,7 +99,7 @@ class Home extends Component<Props> {
                     <View>
                         {(this.props && this.props.upcoming.length > 0) && <Text>Upcoming</Text>}
                         {this.props && this.props.upcoming.map((item) =>
-                            <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
+                            <Card key={item.reminderActivityId} style={[styles.item, styles.card]} onPress={() => this.openReminderActivity(item)}>
 
                                 <Layout style={styles.innerItem}>
                                     <Text category='h5'>{item.reminderName}</Text>
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         padding: 20,
-        backgroundColor: theme['background-color']
+        backgroundColor: theme['color-basic-200']
     },
     fab: {
         position: 'absolute',
@@ -193,5 +193,9 @@ const styles = StyleSheet.create({
     },
     pb: {
         paddingBottom: 20
+    },
+    card: {
+        borderColor: theme['color-basic-300'],
+        borderRadius: 10
     }
 });

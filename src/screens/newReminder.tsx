@@ -33,15 +33,15 @@ const BackIcon = (props: any) => (
 );
 
 const EditIcon = (props: any) => (
-    <Icon {...props} name='edit' pack="material" />
+    <Icon {...props} style={[styles.icon]} name='edit' pack="material" />
 );
 
 const CancelIcon = (props: any) => (
-    <Icon {...props} name='cancel' pack="material" />
+    <Icon {...props} style={[styles.icon]} name='cancel' pack="material" />
 );
 
 const DeleteIcon = (props: any) => (
-    <Icon {...props} name='delete' pack="material" />
+    <Icon {...props} style={[styles.icon, styles.danger]} name='delete' pack="material" />
 );
 
 export default class NewReminder extends Component<Props, State> {
@@ -236,7 +236,7 @@ export default class NewReminder extends Component<Props, State> {
 
     saveReminder = async () => {
         if (this.validate(this.state.reminderV.reminderName)) {
-            if (this.state.insertMode) {
+            if (this.state.insertMode && !this.state.reminderV.reminderId) {
                 this.state.reminderV.reminderId = getRandom();
                 ReminderHandler.addReminder(this.state.reminderV);
             } else {
@@ -291,7 +291,7 @@ export default class NewReminder extends Component<Props, State> {
                 text: "Cancel",
                 style: "cancel"
             },
-            { text: "OK", onPress: () => this.delete }
+            { text: "OK", onPress: () => this.delete() }
         ],
         { cancelable: false }
     );
@@ -321,9 +321,10 @@ export default class NewReminder extends Component<Props, State> {
         return (
             <React.Fragment>
                 <TopNavigation
-                    title={this.title}
+                    title={evaProps => <Text {...evaProps} style={styles.headerTitle}> {this.title} </Text>}
                     accessoryLeft={this.backAction}
-                    accessoryRight={this.state.reminderV.reminderId ? this.editAction : this.empty} />
+                    accessoryRight={this.state.reminderV.reminderId ? this.editAction : this.empty}
+                    style={styles.header} />
                 <Divider />
 
                 <Layout style={styles.reminderContainer}>
@@ -331,7 +332,8 @@ export default class NewReminder extends Component<Props, State> {
 
                         {(this.state.reminderV.reminderId !== '' && this.state.reminderV.reminderId !== null) &&
                             <View style={[styles.row, styles.item]}>
-                                <Text appearance='hint' category='label' style={[styles.label, styles.pt]}>
+                                <Text appearance='hint' category='label'
+                                    style={[styles.pt, styles.label, !this.state.insertMode ? styles.labelDisabled : null]}>
                                     {this.state.reminderV.active ? 'Active' : 'In-Active'}
                                 </Text>
                                 <Toggle
@@ -341,7 +343,8 @@ export default class NewReminder extends Component<Props, State> {
                             </View>}
 
                         <Input
-                            label={evaProps => <Text {...evaProps}>Reminder name</Text>}
+                            label={evaProps => <Text {...evaProps}
+                                style={[styles.pb, styles.label, !this.state.insertMode ? styles.labelDisabled : null]}>Reminder Name</Text>}
                             onChangeText={this.setName}
                             style={styles.item}
                             value={this.state.reminderV.reminderName}
@@ -351,7 +354,8 @@ export default class NewReminder extends Component<Props, State> {
                         />
 
                         <Select
-                            label={evaProps => <Text {...evaProps}>Reminder Type</Text>}
+                            label={evaProps => <Text {...evaProps}
+                                style={[styles.pb, styles.label, !this.state.insertMode ? styles.labelDisabled : null]}>Reminder Type</Text>}
                             value={this.state.reminderTypes[this.state.reminderTypes.findIndex(i => i.store === this.state.reminderV.reminderType)].value}
                             onSelect={this.setReminderType}
                             onFocus={this.dismissKeyboard}
@@ -362,7 +366,8 @@ export default class NewReminder extends Component<Props, State> {
 
                         {(this.state.reminderV.reminderType === 3) &&
                             <Select
-                                label={evaProps => <Text {...evaProps}>Reminder Month</Text>}
+                                label={evaProps => <Text {...evaProps}
+                                    style={[styles.pb, styles.label, !this.state.insertMode ? styles.labelDisabled : null]}>Reminder Month</Text>}
                                 value={this.state.months[this.state.months.findIndex(i => i.store === this.state.reminderV.reminderMonth)].value}
                                 onSelect={this.setReminderMonth}
                                 onFocus={this.dismissKeyboard}
@@ -374,7 +379,8 @@ export default class NewReminder extends Component<Props, State> {
 
                         {(this.state.reminderV.reminderType === 3) &&
                             <Select
-                                label={evaProps => <Text {...evaProps}>Reminder Day</Text>}
+                                label={evaProps => <Text {...evaProps}
+                                    style={[styles.pb, styles.label, !this.state.insertMode ? styles.labelDisabled : null]}>Reminder Day</Text>}
                                 value={this.state.reminderV.reminderDay}
                                 onSelect={this.setReminderDay}
                                 onFocus={this.dismissKeyboard}
@@ -386,7 +392,8 @@ export default class NewReminder extends Component<Props, State> {
 
                         {(this.state.reminderV.reminderType === 2) &&
                             <Select
-                                label={evaProps => <Text {...evaProps}>Reminder Day</Text>}
+                                label={evaProps => <Text {...evaProps}
+                                    style={[styles.pb, styles.label, !this.state.insertMode ? styles.labelDisabled : null]}>Reminder Day</Text>}
                                 value={this.state.reminderV.reminderDay}
                                 onSelect={this.setMonthlyReminderDay}
                                 onFocus={this.dismissKeyboard}
@@ -398,7 +405,8 @@ export default class NewReminder extends Component<Props, State> {
 
                         {(this.state.reminderV.reminderType === 4) &&
                             <Datepicker
-                                label={evaProps => <Text {...evaProps}>Due Date</Text>}
+                                label={evaProps => <Text {...evaProps}
+                                    style={[styles.pb, styles.label, !this.state.insertMode ? styles.labelDisabled : null]}>Due Date</Text>}
                                 date={this.state.reminderV.dueDate}
                                 onSelect={this.onReminderDateChange}
                                 onFocus={this.dismissKeyboard}
@@ -409,7 +417,8 @@ export default class NewReminder extends Component<Props, State> {
                         }
 
                         <Timepicker
-                            label={evaProps => <Text {...evaProps}>Reminder Time</Text>}
+                            label={evaProps => <Text {...evaProps}
+                                style={[styles.pb, styles.label, !this.state.insertMode ? styles.labelDisabled : null]}>Reminder Time</Text>}
                             date={this.state.reminderV.reminderTime}
                             onFocus={this.dismissKeyboard}
                             style={styles.item}
@@ -421,7 +430,8 @@ export default class NewReminder extends Component<Props, State> {
                             multiline={true}
                             disabled={!this.state.insertMode}
                             textStyle={{ minHeight: 64 }}
-                            label={evaProps => <Text {...evaProps}>Notes</Text>}
+                            label={evaProps => <Text {...evaProps}
+                                style={[styles.pb, styles.label, !this.state.insertMode ? styles.labelDisabled : null]}>Notes</Text>}
                             onChangeText={this.setNotes}
                             value={this.state.reminderV.notes}
                             style={styles.item} />
@@ -458,9 +468,32 @@ const styles = StyleSheet.create({
         paddingTop: 8
     },
     label: {
-        fontWeight: theme['text-label-font-weight']
+        fontSize: theme['text-label-font-size'],
+        fontWeight: theme["text-label-font-weight"],
+        color: theme['color-basic-600'],
+    },
+    labelDisabled: {
+        color: theme["color-basic-transparent-600"]
     },
     pr: {
         paddingRight: 10
+    },
+    pb: {
+        paddingBottom: 4
+    },
+    icon: {
+        fontSize: 25
+    },
+    danger: {
+        tintColor: theme["color-danger-500"]
+    },
+    warning: {
+        tintColor: theme["color-warning-500"]
+    },
+    header: {
+        backgroundColor: theme["color-primary-500"]
+    },
+    headerTitle: {
+        fontSize: 18
     }
 });

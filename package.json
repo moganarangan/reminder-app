@@ -21,6 +21,7 @@
     "@ui-kitten/eva-icons": "^5.0.0",
     "expo": "^37.0.0",
     "expo-background-fetch": "~8.1.0",
+    "expo-font": "~8.1.0",
     "expo-task-manager": "~8.1.0",
     "moment": "^2.27.0",
     "react": "16.9.0",

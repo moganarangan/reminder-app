@@ -37,7 +37,7 @@ class History extends React.Component<Props> {
 
                 <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
                     {this.props.ra.map((item) =>
-                        <Card key={item.reminderActivityId} style={styles.item} onPress={() => this.openReminderActivity(item)}>
+                        <Card key={item.reminderActivityId} style={[styles.item, styles.card]} onPress={() => this.openReminderActivity(item)}>
 
                             <Layout style={styles.innerItem}>
                                 <Text category='h5'>{item.reminderName}</Text>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         padding: 20,
-        backgroundColor: theme['background-color']
+        backgroundColor: theme['color-basic-200']
     },
     item: {
         marginTop: 10
@@ -109,5 +109,9 @@ const styles = StyleSheet.create({
     titleR: {
         color: theme["color-primary-500"],
         fontWeight: 'bold'
+    },
+    card: {
+        borderColor: theme['color-basic-300'],
+        borderRadius: 10
     }
 });

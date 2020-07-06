@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux'
-import { registerRootComponent } from 'expo';
+import { registerRootComponent, AppLoading } from 'expo';
 import SafeAreaView, { SafeAreaProvider } from 'react-native-safe-area-view';
 
 import NotificationHandler from './handlers/notificationHandler';
@@ -17,6 +17,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import * as eva from '@eva-design/eva';
 import { default as mapping } from './utilities/mapping.json';
+import * as Font from 'expo-font';
+
 import {
   ApplicationProvider, IconRegistry, Text, Icon,
   BottomNavigation, BottomNavigationTab
@@ -27,9 +29,15 @@ import { MaterialIconsPack } from "./utilities/material-icons";
 import TaskHandler from "./handlers/taskHandler";
 import { default as theme } from './utilities/theme.json';
 import ReminderActivity from "./screens/reminderActivity";
+import More from "./screens/more";
 
 const { Navigator, Screen } = createBottomTabNavigator();
 const RootStack = createStackNavigator();
+
+const fonts = {
+  "Roboto-Regular": require('../assets/fonts/Roboto-Regular.ttf'),
+  "Roboto-Light": require('../assets/fonts/Roboto-Light.ttf')
+};
 
 function MainTabNavigator() {
   return (
@@ -37,6 +45,7 @@ function MainTabNavigator() {
       <Screen name="Home" component={Home} />
       <Screen name="Configuration" component={Configuration} />
       <Screen name="History" component={History} />
+      <Screen name="More" component={More} />
     </Navigator >
   )
 }
@@ -53,18 +62,30 @@ const BottomTabBar = ({ navigation, state }: { navigation: any, state: any }) =>
 
     <BottomNavigationTab title={evaProps => <Text {...evaProps}>History</Text>}
       icon={evaProps => <Icon {...evaProps} name='history' pack="material" />} />
+
+    <BottomNavigationTab title={evaProps => <Text {...evaProps}>More</Text>}
+      icon={evaProps => <Icon {...evaProps} name='more-vertical' pack="feather" />} />
   </BottomNavigation>
 );
 
 export default class App extends Component {
+  state = {
+    isReady: false
+  }
 
   async componentDidMount() {
+    await Font.loadAsync(fonts);
+    this.setState({ isReady: true });
+
     await NotificationHandler.askNotification();
     TaskHandler.startBackGroundTask();
     TaskHandler.runTask();
   }
 
   render() {
+    if (!this.state.isReady) {
+      return <AppLoading />;
+    }
     return (
       <>
         <IconRegistry icons={[EvaIconsPack, FeatherIconsPack, MaterialIconsPack]} />

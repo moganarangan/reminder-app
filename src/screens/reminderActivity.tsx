@@ -127,14 +127,15 @@ export default class ReminderActivity extends Component<Props, State> {
         return (
             <React.Fragment>
                 <TopNavigation
-                    title={this.title}
+                    title={evaProps => <Text {...evaProps} style={styles.headerTitle}> {this.title} </Text>}
                     accessoryLeft={this.backAction}
+                    style={styles.header}
                 />
                 <Divider />
 
                 <Layout style={styles.reminderContainer}>
                     <ScrollView>
-                    
+
                         <View style={styles.title}>
                             <Text style={[styles.name]} category='h4'>{this.state.reminderA.reminderName}</Text>
                         </View>
@@ -219,4 +220,10 @@ const styles = StyleSheet.create({
     title: {
         alignItems: "center"
     },
+    header: {
+        backgroundColor: theme["color-primary-500"]
+    },
+    headerTitle: {
+        fontSize: 18
+    }
 });
