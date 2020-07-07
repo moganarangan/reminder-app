@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import { Layout, Text } from '@ui-kitten/components';
 import { default as theme } from '../utilities/theme.json';
 
@@ -10,6 +10,12 @@ export default class More extends React.Component {
                 <Layout style={styles.container1}>
                     <View style={styles.heading}>
                         <Text category='h5'>More</Text>
+                    </View>
+                    <View style={styles.logoHeader}>
+                        <Image
+                            style={styles.logo}
+                            source={require('../../assets/icon2.png')}
+                        />
                     </View>
                 </Layout>
                 <Layout style={styles.container2}>
@@ -27,8 +33,9 @@ const styles = StyleSheet.create({
     container1: {
         flex: 1,
         flexDirection: 'column',
+        justifyContent: 'space-between',
         padding: 20,
-        backgroundColor: theme['color-basic-200'],
+        backgroundColor: theme['color-basic-200']
     },
     container2: {
         flex: 3,
@@ -52,5 +59,12 @@ const styles = StyleSheet.create({
     subtitle: {
         color: theme["color-basic-800"],
         fontFamily: 'Roboto-Light'
+    },
+    logoHeader: {
+        alignItems: 'flex-end'
+    },
+    logo: {
+        width: 90,
+        height: 90
     }
 });

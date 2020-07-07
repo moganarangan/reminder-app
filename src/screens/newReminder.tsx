@@ -12,6 +12,12 @@ import { reminder } from '../model/reminder';
 import moment from "moment";
 import { default as theme } from '../utilities/theme.json';
 
+import { YellowBox } from 'react-native';
+
+YellowBox.ignoreWarnings([
+    'Non-serializable values were found in the navigation state',
+]);
+
 interface Props {
     navigation: any,
     route: any
@@ -51,7 +57,11 @@ export default class NewReminder extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        const { item } = this.props.route.params;
+        let item = null;
+        if (this.props.route.params && this.props.route.params.item) {
+            item = this.props.route.params.item;
+        }
+
         if (item) {
             this.title = 'Edit Reminder';
             this.loadReminder(item);
@@ -355,6 +365,7 @@ export default class NewReminder extends Component<Props, State> {
                             status={this.state.nameStatus}
                             caption={this.state.nameCaption}
                             disabled={!this.state.insertMode}
+                            maxLength={20}
                         />
 
                         <Select
@@ -438,7 +449,9 @@ export default class NewReminder extends Component<Props, State> {
                                 style={[styles.pb, styles.label, !this.state.insertMode ? styles.labelDisabled : null]}>Notes</Text>}
                             onChangeText={this.setNotes}
                             value={this.state.reminderV.notes}
-                            style={styles.item} />
+                            style={styles.item}
+                            maxLength={150}
+                        />
 
                         {(this.state.insertMode) &&
                             <Button onPress={() => this.saveReminder()}>

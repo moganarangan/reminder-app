@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "reminder-app",
+    "name": "My Reminder",
     "slug": "reminder-app",
     "platforms": [
       "ios",
@@ -12,8 +12,8 @@
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover",
+      "backgroundColor": "#27B4E8"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -30,6 +30,10 @@
     "androidStatusBar": {
       "barStyle": "light-content",
       "backgroundColor": "#27B4E8"
+    },
+    "android": {
+      "package": "com.own.myreminder",
+      "versionCode": 1
     }
   }
 }

@@ -32,7 +32,7 @@ TaskManager.defineTask(REMINDER_TASK_NAME, () => {
 export default class TaskHandler {
     static startBackGroundTask = () => {
         BackgroundFetch.registerTaskAsync(REMINDER_TASK_NAME, {
-            minimumInterval: 600,
+            minimumInterval: 120,
             stopOnTerminate: false,
             startOnBoot: true
         });

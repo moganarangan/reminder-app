@@ -278,14 +278,16 @@ export default class ReminderHandler {
 
         const scheduleTime = moment(ra.dueDate);
         scheduleTime.set({ minute: -10 });
-        NotificationHandler.showNotification(localNotification, { time: scheduleTime });
+        const t = scheduleTime.toDate();
+        NotificationHandler.showNotification(localNotification, { time: t });
 
         const now = moment()
         now.set({ second: 10 });
         const diffHours = scheduleTime.diff(now, 'hour');
+        const tt = now.toDate();
 
         if (diffHours >= 24) {
-            NotificationHandler.showNotification(localNotification, { time: scheduleTime });
+            NotificationHandler.showNotification(localNotification, { time: tt });
         }
     }
 }

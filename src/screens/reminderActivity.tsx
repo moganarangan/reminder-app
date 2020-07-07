@@ -5,12 +5,16 @@ import {
     Input, Text, Datepicker, Icon,
     Button, Layout, Divider, TopNavigation, TopNavigationAction
 } from '@ui-kitten/components';
-import Timepicker from '../utilities/time-picker.component';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Spinner } from '@ui-kitten/components';
 import moment from "moment";
 import { reminderActivity } from '../model/reminderActivity';
 import { default as theme } from '../utilities/theme.json';
+
+import { YellowBox } from 'react-native';
+
+YellowBox.ignoreWarnings([
+    'Non-serializable values were found in the navigation state',
+]);
 
 interface Props {
     navigation: any,
@@ -175,7 +179,9 @@ export default class ReminderActivity extends Component<Props, State> {
                                 style={[styles.pbs, styles.label]}>Notes</Text>}
                             onChangeText={this.setNotes}
                             value={this.state.reminderA.notes}
-                            style={styles.item} />
+                            style={styles.item}
+                            maxLength={150}
+                        />
 
                         {(this.edit) &&
                             <Button onPress={() => this.saveReminderActivity()}>

@@ -24,8 +24,8 @@ class Home extends Component<Props> {
     reminderTypes = ['Daily', 'Monthly', 'Yearly', 'Specific Date'];
 
     openNewReminder = () => {
-        if (this.props.rCount && this.props.rCount < 8) {
-            this.props.navigation.navigate('NewReminder', {});
+        if (this.props.rCount < 8) {
+            this.props.navigation.navigate('NewReminder', null);
         }
     }
 
