@@ -1,6 +1,6 @@
 import {
   ADD_REMINDER, EDIT_REMINDER, DELETE_REMINDER,
-  ADD_REMINDER_ACTIVITY, EDIT_REMINDER_ACTIVITY, DELETE_REMINDER_ACTIVITY
+  ADD_REMINDER_ACTIVITY, EDIT_REMINDER_ACTIVITY, DELETE_REMINDER_ACTIVITY, DELETE_REMINDER_ACTIVITY_MORE
 } from '../../constans/reminderMaster';
 import { reminder } from '../../model/reminder';
 import { reminderActivity } from '../../model/reminderActivity';
@@ -32,5 +32,10 @@ export const editReminderActivity = (editReminderActivity: reminderActivity) => 
 
 export const deleteReminderActivity = (deleteReminderActivity: reminderActivity) => ({
   type: DELETE_REMINDER_ACTIVITY,
+  deleteReminderActivity
+});
+
+export const deleteReminderActivityMore = (deleteReminderActivity: Array<string>) => ({
+  type: DELETE_REMINDER_ACTIVITY_MORE,
   deleteReminderActivity
 });

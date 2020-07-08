@@ -33,6 +33,8 @@ interface State {
     days: Array<number>;
     nameCaption: string;
     nameStatus: string;
+    timeCaption: string;
+    timeStatus: string;
     monthlyDays: Array<number>;
     insertMode: boolean;
 }
@@ -102,6 +104,8 @@ class NewReminder extends Component<Props, State> {
             monthlyDays: Array.from(Array(20).keys(), (_, i) => i + 1),
             nameCaption: '',
             nameStatus: 'basic',
+            timeCaption: '',
+            timeStatus: 'basic',
             insertMode: false
         }
     }
@@ -148,6 +152,8 @@ class NewReminder extends Component<Props, State> {
             monthlyDays: Array.from(Array(20).keys(), (_, i) => i + 1),
             nameCaption: '',
             nameStatus: 'basic',
+            timeCaption: '',
+            timeStatus: 'basic',
             insertMode: true
         }
     }
@@ -219,7 +225,9 @@ class NewReminder extends Component<Props, State> {
                 ...prevState.reminderV,
                 reminderTime: value
             }
-        }));
+        }), () => {
+            this.isValidTimeSpecific();
+        });
     }
 
     setReminderDay = (item: any) => {
@@ -251,7 +259,8 @@ class NewReminder extends Component<Props, State> {
 
     saveReminder = async () => {
         if (this.validate(this.state.reminderV.reminderName)) {
-            if (this.isDuplicate(this.state.reminderV.reminderName, this.state.reminderV.reminderId)) {
+            if (this.isDuplicate(this.state.reminderV.reminderName, this.state.reminderV.reminderId) ||
+                !this.isValidTimeSpecific()) {
                 return;
             }
             else {
@@ -307,6 +316,39 @@ class NewReminder extends Component<Props, State> {
             nameCaption: ''
         });
         return false;
+    }
+
+    isValidTimeSpecific = (): boolean => {
+        if (this.state.reminderV.reminderType === 4) {
+            const now = moment();
+            const dueDate = moment(this.state.reminderV.dueDate);
+            const d = moment(this.state.reminderV.reminderTime);
+            const h = d.hour();
+            const m = d.minute();
+            dueDate.set({
+                hour: h,
+                minute: m,
+                second: 0,
+                millisecond: 0
+            });
+            const diffMins = dueDate.diff(now, 'minutes');
+
+            if (diffMins <= 0) {
+                this.setState({
+                    timeStatus: 'danger',
+                    timeCaption: 'Set future time'
+                });
+                return false;
+            } else {
+                this.setState({
+                    timeStatus: 'basic',
+                    timeCaption: ''
+                });
+                return true;
+            }
+        }
+
+        return true;
     }
 
     dismissKeyboard = () => {
@@ -454,6 +496,7 @@ class NewReminder extends Component<Props, State> {
                                 onFocus={this.dismissKeyboard}
                                 disabled={!this.state.insertMode}
                                 style={styles.item}
+                                min={moment().toDate()}
                                 accessoryRight={(props) => <Icon {...props} name='calendar' pack="feather" />}
                             />
                         }
@@ -465,6 +508,8 @@ class NewReminder extends Component<Props, State> {
                             onFocus={this.dismissKeyboard}
                             style={styles.item}
                             disabled={!this.state.insertMode}
+                            status={this.state.timeStatus}
+                            caption={this.state.timeCaption}
                             accessoryRight={(props) => <Icon {...props} name='clock' pack="feather" />}
                             onSelect={this.setTime} />
 

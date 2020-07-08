@@ -1,5 +1,5 @@
 import { reminderMasterModel } from '../../model/reminderMasterModel';
-import { ADD_REMINDER, ADD_REMINDER_ACTIVITY, EDIT_REMINDER, EDIT_REMINDER_ACTIVITY, DELETE_REMINDER, DELETE_REMINDER_ACTIVITY } from '../../constans/reminderMaster'
+import { ADD_REMINDER, ADD_REMINDER_ACTIVITY, EDIT_REMINDER, EDIT_REMINDER_ACTIVITY, DELETE_REMINDER, DELETE_REMINDER_ACTIVITY, DELETE_REMINDER_ACTIVITY_MORE } from '../../constans/reminderMaster'
 import { reminder } from '../../model/reminder';
 import { reminderActivity } from '../../model/reminderActivity';
 
@@ -70,6 +70,13 @@ const reminderMaster = (state: reminderMasterModel = Initial_State, action: any)
             return {
                 ...state,
                 remindersActivity: [...state.remindersActivity.filter(i => i.reminderActivityId !== action.deleteReminderActivity.reminderActivityId)]
+            };
+        }
+
+        case DELETE_REMINDER_ACTIVITY_MORE: {
+            return {
+                ...state,
+                remindersActivity: [...state.remindersActivity.filter(({ reminderActivityId }) => !action.deleteReminderActivity.includes(reminderActivityId))]
             };
         }
 

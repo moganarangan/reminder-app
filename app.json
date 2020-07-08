@@ -36,6 +36,11 @@
     "android": {
       "package": "com.own.myreminder",
       "versionCode": 1
+    },
+    "notification": {
+      "icon": "./assets/icon3.png",
+      "iosDisplayInForeground": true,
+      "color": "#27B4E8"
     }
   }
 }

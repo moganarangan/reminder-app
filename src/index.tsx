@@ -77,7 +77,7 @@ export default class App extends Component {
     await Font.loadAsync(fonts);
     this.setState({ isReady: true });
 
-    NotificationHandler.askNotification();
+    await NotificationHandler.askNotification();
     TaskHandler.startBackGroundTask();
     TaskHandler.runTask();
   }

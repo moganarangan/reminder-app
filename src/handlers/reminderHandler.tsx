@@ -1,5 +1,8 @@
 import { store } from '../store/configureStore';
-import { addReminder, addReminderActivity, editReminder, editReminderActivity, deleteReminder } from '../store/actions/reminderAction';
+import {
+    addReminder, addReminderActivity, editReminder, editReminderActivity,
+    deleteReminder, deleteReminderActivityMore
+} from '../store/actions/reminderAction';
 import NotificationHandler from './notificationHandler';
 import getRandom from '../utilities/random';
 import { LocalNotification } from 'expo/build/Notifications/Notifications.types';
@@ -11,7 +14,9 @@ import moment from "moment";
 export default class ReminderHandler {
 
     static saveReminder(reminder: reminder) {
+        ReminderHandler.deleteReminderActivityByReminder(reminder);
         store.dispatch(editReminder(reminder));
+        ReminderHandler.addReminder(reminder, true);
     }
 
     static saveReminderActivity(reminderA: reminderActivity) {
@@ -20,6 +25,14 @@ export default class ReminderHandler {
 
     static deleteReminder(reminder: reminder) {
         store.dispatch(deleteReminder(reminder));
+    }
+
+    static deleteReminderActivityByReminder(reminder: reminder) {
+        const state = store.getState();
+        const ra = state.reminderMaster.remindersActivity.filter(i => i.reminderId.toLowerCase() === reminder.reminderId.toLowerCase());
+        const today = moment().startOf('day');
+        const toDelete = ra.filter(i => moment(i.dueDate).diff(today, 'hours') >= 0).map(i=> i.reminderActivityId);
+        store.dispatch(deleteReminderActivityMore(toDelete));
     }
 
     static addReminder(newReminder: reminder, isTask: boolean = false, raList: Array<reminderActivity> = []) {
@@ -72,7 +85,10 @@ export default class ReminderHandler {
             }
         }
 
-        if (canAdd) {
+        const now = moment();
+        const diffMins = today.diff(now, 'minute');
+
+        if (canAdd && diffMins > 0) {
             const ra: reminderActivity = {
                 reminderActivityId: getRandom(),
                 reminderId: reminder.reminderId,
@@ -130,7 +146,10 @@ export default class ReminderHandler {
                 }
             }
 
-            if (canAdd) {
+            const now = moment();
+            const diffMins = monthDate.diff(now, 'minute');
+
+            if (canAdd && diffMins > 0) {
                 const ra: reminderActivity = {
                     reminderActivityId: getRandom(),
                     reminderId: reminder.reminderId,
@@ -189,7 +208,10 @@ export default class ReminderHandler {
                 }
             }
 
-            if (canAdd) {
+            const now = moment();
+            const diffMins = monthDate.diff(now, 'minute');
+
+            if (canAdd && diffMins > 0) {
                 const ra: reminderActivity = {
                     reminderActivityId: getRandom(),
                     reminderId: reminder.reminderId,
@@ -240,7 +262,10 @@ export default class ReminderHandler {
                 }
             }
 
-            if (canAdd) {
+            const now = moment();
+            const diffMins = dueDate.diff(now, 'minute');
+
+            if (canAdd && diffMins > 0) {
                 const ra: reminderActivity = {
                     reminderActivityId: getRandom(),
                     reminderId: reminder.reminderId,
