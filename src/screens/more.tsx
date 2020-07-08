@@ -9,7 +9,7 @@ export default class More extends React.Component {
             <>
                 <Layout style={styles.container1}>
                     <View style={styles.heading}>
-                        <Text category='h5'>More</Text>
+                        <Text category='h5' style={{fontSize: 25}}>More</Text>
                     </View>
                     <View style={styles.logoHeader}>
                         <Image
@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
     },
     heading: {
         alignItems: "flex-start",
-        fontFamily: 'Roboto-Light',
     },
     pt: {
         paddingTop: 20
@@ -53,12 +52,10 @@ const styles = StyleSheet.create({
         paddingLeft: 30
     },
     title: {
-        fontFamily: 'Roboto-Light',
         fontWeight: "900"
     },
     subtitle: {
-        color: theme["color-basic-800"],
-        fontFamily: 'Roboto-Light'
+        color: theme["color-basic-800"]
     },
     logoHeader: {
         alignItems: 'flex-end'

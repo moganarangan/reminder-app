@@ -6,6 +6,7 @@ import { reminderActivity } from '../model/reminderActivity';
 import moment from "moment";
 import { default as theme } from '../utilities/theme.json';
 import { getHistoryReminders, getUpcomingDashboardActivities, getOverdueDashboardActivities } from '../selectors';
+import { styles } from '../utilities/stylesheet';
 
 interface Props {
     navigation: any,
@@ -31,22 +32,22 @@ class History extends React.Component<Props> {
 
     render() {
         return (
-            <Layout style={[styles.container, this.props.ra.length === 0 ? styles.centre : null]}>
+            <Layout style={[styles.container, styles.colorT, this.props.ra.length === 0 ? styles.centre : null]}>
 
                 <View style={styles.title}>
-                    <Text category='h3'><Text style={styles.titleR} category='h3'>R</Text>eminders</Text>
+                <Text category='h3' style={{ fontWeight: '900' }}><Text style={styles.titleR} category='h2'>R</Text>eminders</Text>
                 </View>
 
                 <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
                     {this.props.ra.map((item) =>
                         <Card key={item.reminderActivityId} style={[styles.item, styles.card]} onPress={() => this.openReminderActivity(item)}>
 
-                            <Layout style={styles.innerItem}>
+                            <Layout style={[styles.innerItem, styles.colorT]}>
                                 <Text category='h5'>{item.reminderName}</Text>
                                 <Text category='h6'>{this.reminderTypes[item.reminderType - 1]}</Text>
                             </Layout>
 
-                            <Layout style={styles.row}>
+                            <Layout style={[styles.row, styles.colorT]}>
                                 <Icon style={[styles.icon, styles.pr,
                                 this.props.overdue.findIndex(i => i.reminderActivityId === item.reminderActivityId) > -1 ? styles.danger : null,
                                 this.props.upcoming.findIndex(i => i.reminderActivityId === item.reminderActivityId) > -1 ? styles.warning : null,
@@ -87,61 +88,3 @@ const mapStateToProps = (state: any) => {
 
 // Exports
 export default connect(mapStateToProps, null)(History);
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        padding: 20,
-        backgroundColor: theme['color-basic-200']
-    },
-    centre: {
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    item: {
-        marginTop: 10
-    },
-    innerItem: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 15
-    },
-    row: {
-        flexDirection: 'row'
-    },
-    pr: {
-        paddingRight: 10
-    },
-    pl: {
-        paddingLeft: 10
-    },
-    pls: {
-        paddingLeft: 5
-    },
-    icon: {
-        height: 18,
-        tintColor: theme["color-primary-500"]
-    },
-    title: {
-        alignItems: "center"
-    },
-    titleR: {
-        color: theme["color-primary-500"],
-        fontWeight: 'bold'
-    },
-    card: {
-        borderColor: theme['color-basic-300'],
-        borderRadius: 10
-    },
-    warning: {
-        tintColor: theme["color-warning-500"]
-    },
-    success: {
-        tintColor: theme["color-success-500"]
-    },
-    danger: {
-        tintColor: theme["color-danger-500"]
-    }
-});

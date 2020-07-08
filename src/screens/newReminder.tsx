@@ -11,27 +11,30 @@ import getRandom from '../utilities/random';
 import { reminder } from '../model/reminder';
 import moment from "moment";
 import { default as theme } from '../utilities/theme.json';
+import { getReminders } from '../selectors';
 
 import { YellowBox } from 'react-native';
+import { connect } from 'react-redux';
 
 YellowBox.ignoreWarnings([
     'Non-serializable values were found in the navigation state',
 ]);
 
 interface Props {
-    navigation: any,
-    route: any
+    navigation: any;
+    route: any;
+    allReminders: Array<reminder>;
 }
 
 interface State {
-    reminderV: reminder,
-    reminderTypes: Array<any>,
-    months: Array<any>,
-    days: Array<number>,
-    nameCaption: string,
-    nameStatus: string,
-    monthlyDays: Array<number>,
-    insertMode: boolean
+    reminderV: reminder;
+    reminderTypes: Array<any>;
+    months: Array<any>;
+    days: Array<number>;
+    nameCaption: string;
+    nameStatus: string;
+    monthlyDays: Array<number>;
+    insertMode: boolean;
 }
 
 const BackIcon = (props: any) => (
@@ -50,7 +53,7 @@ const DeleteIcon = (props: any) => (
     <Icon {...props} style={[styles.icon, styles.danger]} name='delete-outline' pack="materialCommunity" />
 );
 
-export default class NewReminder extends Component<Props, State> {
+class NewReminder extends Component<Props, State> {
     _isMounted = false;
     title: string = '';
 
@@ -248,15 +251,19 @@ export default class NewReminder extends Component<Props, State> {
 
     saveReminder = async () => {
         if (this.validate(this.state.reminderV.reminderName)) {
-            if (this.state.insertMode && !this.state.reminderV.reminderId) {
-                this.state.reminderV.reminderId = getRandom();
-                this.state.reminderV.last_updated = moment().toDate();
-                ReminderHandler.addReminder(this.state.reminderV);
-            } else {
-                this.state.reminderV.last_updated = moment().toDate();
-                ReminderHandler.saveReminder(this.state.reminderV);
+            if (this.isDuplicate(this.state.reminderV.reminderName, this.state.reminderV.reminderId)) {
+                return;
             }
-
+            else {
+                if (this.state.insertMode && !this.state.reminderV.reminderId) {
+                    this.state.reminderV.reminderId = getRandom();
+                    this.state.reminderV.last_updated = moment().toDate();
+                    ReminderHandler.addReminder(this.state.reminderV);
+                } else {
+                    this.state.reminderV.last_updated = moment().toDate();
+                    ReminderHandler.saveReminder(this.state.reminderV);
+                }
+            }
             this.goBack();
         }
     }
@@ -281,6 +288,27 @@ export default class NewReminder extends Component<Props, State> {
         }
     }
 
+    isDuplicate = (name: string, id: string): boolean => {
+        const isExist = this.props.allReminders.filter(i => (
+            i.reminderName.toLowerCase() === name.toLowerCase()
+            && i.reminderId.toLowerCase() !== id.toLowerCase()));
+
+        if (isExist && isExist.length > 0) {
+            this.setState({
+                nameStatus: 'danger',
+                nameCaption: 'Reminder name already exist'
+            });
+
+            return true;
+        }
+
+        this.setState({
+            nameStatus: 'basic',
+            nameCaption: ''
+        });
+        return false;
+    }
+
     dismissKeyboard = () => {
         Keyboard.dismiss();
     }
@@ -295,7 +323,6 @@ export default class NewReminder extends Component<Props, State> {
     backAction = () => (
         <TopNavigationAction icon={BackIcon} onPress={this.goBack} />
     );
-
 
     confirmDelete = () => Alert.alert(
         "",
@@ -465,6 +492,18 @@ export default class NewReminder extends Component<Props, State> {
         )
     }
 }
+
+// Map State To Props (Redux Store Passes State To Component)
+const mapStateToProps = (state: any) => {
+    console.log('Home map state', state);
+    // Redux Store --> Component
+    return {
+        allReminders: getReminders(state)
+    };
+};
+
+// Exports
+export default connect(mapStateToProps, null)(NewReminder);
 
 const styles = StyleSheet.create({
     reminderContainer: {

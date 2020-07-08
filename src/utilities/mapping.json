@@ -1,6 +1,6 @@
 {
     "strict": {
-        "text-font-family": "Roboto-Regular"
+        "text-font-family": "Roboto-Light"
     },
     "components": {
         "Timepicker": {

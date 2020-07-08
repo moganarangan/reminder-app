@@ -6,8 +6,8 @@ import { reminderActivity } from '../model/reminderActivity';
 import { reminder } from '../model/reminder';
 
 
-const getReminders = (state: any) => state.reminderMaster.reminders;
-const getRemindersActivity = (state: any) => state.reminderMaster.remindersActivity;
+export const getReminders = (state: any) => state.reminderMaster.reminders;
+export const getRemindersActivity = (state: any) => state.reminderMaster.remindersActivity;
 
 export const getTodayDashboardActivities = createSelector(
     [getRemindersActivity],

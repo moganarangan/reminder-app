@@ -1,15 +1,18 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { Layout, Card, Text, Icon } from '@ui-kitten/components';
 import { reminder } from '../model/reminder';
 import moment from "moment";
 import { default as theme } from '../utilities/theme.json';
-import { getConfigReminders } from '../selectors';
+import { getConfigReminders, getRemindersCount } from '../selectors';
+import { FAB } from 'react-native-paper';
+import { styles } from '../utilities/stylesheet';
 
 interface Props {
-    navigation: any,
-    reminders: Array<reminder>
+    navigation: any;
+    reminders: Array<reminder>;
+    rCount: number;
 }
 
 class Configuration extends React.Component<Props> {
@@ -31,24 +34,31 @@ class Configuration extends React.Component<Props> {
         return moment(n, 'MM').format('MMMM');
     }
 
+    openNewReminder = () => {
+        if (this.props.rCount < 8) {
+            this.props.navigation.navigate('NewReminder', null);
+        }
+    }
+
     render() {
         return (
-            <Layout style={[styles.container, this.props.reminders.length === 0 ? styles.centre : null]}>
+            <Layout style={[styles.container, styles.colorT, this.props.reminders.length === 0 ? styles.centre : null]}>
 
                 <View style={styles.title}>
-                    <Text category='h3'><Text style={styles.titleR} category='h3'>R</Text>eminders</Text>
+                    <Text category='h3' style={{ fontWeight: '900' }}><Text style={styles.titleR} category='h2'>R</Text>eminders</Text>
                 </View>
 
                 <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
                     {this.props.reminders.map((item) =>
-                        <Card key={item.reminderId} style={[styles.item, styles.card]} onPress={() => this.openReminder(item)}>
+                        <Card key={item.reminderId} style={[styles.item, styles.card]}
+                            onPress={() => this.openReminder(item)}>
 
-                            <Layout style={styles.innerItem}>
+                            <Layout style={[styles.innerItem, styles.colorT]}>
                                 <Text category='h5'>{item.reminderName}</Text>
                                 <Text category='h6'>{this.reminderTypes[item.reminderType - 1]}</Text>
                             </Layout>
 
-                            <Layout style={styles.row}>
+                            <Layout style={[styles.row, styles.colorT]}>
                                 {(item.reminderType !== 1) &&
                                     <Icon style={[styles.icon, styles.pr]} name='calendar' pack="feather" />
                                 }
@@ -66,7 +76,7 @@ class Configuration extends React.Component<Props> {
                                 }
                                 {(item.reminderType === 4) && <Text category='s1'>{this.getSpecificDate(item.dueDate)}</Text>}
 
-                                <Layout style={[styles.row, item.reminderType !== 1 ? styles.pl : {}]}>
+                                <Layout style={[styles.row, styles.colorT, item.reminderType !== 1 ? styles.pl : {}]}>
                                     <Icon style={styles.icon} name='clock' pack="feather" />
                                     <Text style={styles.pl} category='s1'>{this.getTime(item.reminderTime)}</Text>
                                 </Layout>
@@ -80,6 +90,13 @@ class Configuration extends React.Component<Props> {
                         category='h5' appearance='hint'>
                         Add new reminders by pressing + icon in Home.
                     </Text>}
+
+                {this.props.rCount < 8 &&
+                    <FAB style={styles.fab}
+                        icon="plus"
+                        color="#ffffff"
+                        onPress={() => this.openNewReminder()}
+                    />}
             </Layout >
         );
     }
@@ -89,58 +106,10 @@ class Configuration extends React.Component<Props> {
 const mapStateToProps = (state: any) => {
     // Redux Store --> Component
     return {
-        reminders: getConfigReminders(state)
+        reminders: getConfigReminders(state),
+        rCount: getRemindersCount(state)
     };
 };
 
 // Exports
 export default connect(mapStateToProps, null)(Configuration);
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        padding: 20,
-        backgroundColor: theme['color-basic-200']
-    },
-    item: {
-        marginTop: 10
-    },
-    centre: {
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    innerItem: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 15
-    },
-    row: {
-        flexDirection: 'row'
-    },
-    pr: {
-        paddingRight: 10
-    },
-    pl: {
-        paddingLeft: 10
-    },
-    pls: {
-        paddingLeft: 5
-    },
-    icon: {
-        height: 18,
-        tintColor: theme["color-primary-500"]
-    },
-    title: {
-        alignItems: "center"
-    },
-    titleR: {
-        color: theme["color-primary-500"],
-        fontWeight: 'bold'
-    },
-    card: {
-        borderColor: theme['color-basic-300'],
-        borderRadius: 10
-    }
-});

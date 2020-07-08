@@ -36,7 +36,6 @@ const { Navigator, Screen } = createBottomTabNavigator();
 const RootStack = createStackNavigator();
 
 const fonts = {
-  "Roboto-Regular": require('../assets/fonts/Roboto-Regular.ttf'),
   "Roboto-Light": require('../assets/fonts/Roboto-Light.ttf')
 };
 
@@ -78,7 +77,7 @@ export default class App extends Component {
     await Font.loadAsync(fonts);
     this.setState({ isReady: true });
 
-    await NotificationHandler.askNotification();
+    NotificationHandler.askNotification();
     TaskHandler.startBackGroundTask();
     TaskHandler.runTask();
   }
