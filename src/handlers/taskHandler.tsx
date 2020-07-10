@@ -54,7 +54,7 @@ export default class TaskHandler {
     static execute(state: any, today: Moment) {
         state.reminderMaster.reminders.forEach(async (r: any) => {
             if (r.active) {
-                ReminderHandler.addReminder(r, true, state.reminderMaster.remindersActivity);
+                ReminderHandler.calculateNextReminder(r, true, state.reminderMaster.remindersActivity);
             }
         });
 

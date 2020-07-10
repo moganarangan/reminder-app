@@ -44,7 +44,8 @@ class Home extends Component<Props> {
 
     render() {
         return (
-            <Layout style={[styles.container, styles.colorT, this.props.rCount === 0 ? styles.centre : null]}>
+            <Layout style={[styles.container, styles.colorT, (this.props.rCount === 0 && this.props.today.length === 0
+                && this.props.upcoming.length === 0 && this.props.overdue.length === 0) ? styles.centre : null]}>
 
                 <View style={styles.title}>
                     <Text category='h3' style={{ fontWeight: '900' }}><Text style={styles.titleR} category='h2'>R</Text>eminders</Text>
@@ -122,7 +123,8 @@ class Home extends Component<Props> {
                     </View>
                 </ScrollView>
 
-                {this.props.rCount === 0 &&
+                {(this.props.rCount === 0 && this.props.today.length === 0
+                    && this.props.upcoming.length === 0 && this.props.overdue.length === 0) &&
                     <Text style={{ flex: 2, alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
                         category='h5' appearance='hint'>
                         Add new reminders by pressing + icon below.

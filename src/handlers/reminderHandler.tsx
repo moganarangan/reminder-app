@@ -16,7 +16,7 @@ export default class ReminderHandler {
     static saveReminder(reminder: reminder) {
         ReminderHandler.deleteReminderActivityByReminder(reminder);
         store.dispatch(editReminder(reminder));
-        ReminderHandler.addReminder(reminder, true);
+        ReminderHandler.calculateNextReminder(reminder);
     }
 
     static saveReminderActivity(reminderA: reminderActivity) {
@@ -31,15 +31,16 @@ export default class ReminderHandler {
         const state = store.getState();
         const ra = state.reminderMaster.remindersActivity.filter(i => i.reminderId.toLowerCase() === reminder.reminderId.toLowerCase());
         const today = moment().startOf('day');
-        const toDelete = ra.filter(i => moment(i.dueDate).diff(today, 'hours') >= 0).map(i=> i.reminderActivityId);
+        const toDelete = ra.filter(i => moment(i.dueDate).diff(today, 'hours') >= 0).map(i => i.reminderActivityId);
         store.dispatch(deleteReminderActivityMore(toDelete));
     }
 
     static addReminder(newReminder: reminder, isTask: boolean = false, raList: Array<reminderActivity> = []) {
+        store.dispatch(addReminder(newReminder));
         ReminderHandler.calculateNextReminder(newReminder, isTask, raList);
     }
 
-    private static calculateNextReminder(reminder: reminder, isTask: boolean, raList: Array<reminderActivity>) {
+    static calculateNextReminder(reminder: reminder, isTask: boolean = false, raList: Array<reminderActivity> = []) {
         switch (reminder.reminderType) {
             case 1:
                 ReminderHandler.processDailyReminder(reminder, isTask, raList);
@@ -59,11 +60,7 @@ export default class ReminderHandler {
         }
     }
 
-    private static processDailyReminder(reminder: reminder, isTask: boolean, raList: Array<reminderActivity>) {
-        if (!isTask) {
-            store.dispatch(addReminder(reminder));
-        }
-
+    private static processDailyReminder(reminder: reminder, isTask: boolean = false, raList: Array<reminderActivity> = []) {
         const today = moment();
         const d = moment(reminder.reminderTime);
         const h = d.hour();
@@ -88,7 +85,7 @@ export default class ReminderHandler {
         const now = moment();
         const diffMins = today.diff(now, 'minute');
 
-        if (canAdd && diffMins > 0) {
+        if (canAdd && (diffMins >= 0 || isTask)) {
             const ra: reminderActivity = {
                 reminderActivityId: getRandom(),
                 reminderId: reminder.reminderId,
@@ -109,10 +106,6 @@ export default class ReminderHandler {
     }
 
     private static async processMonthlyReminder(reminder: reminder, isTask: boolean, raList: Array<reminderActivity>) {
-        if (!isTask) {
-            store.dispatch(addReminder(reminder));
-        }
-
         const today = moment().startOf('day');
         const dateString = today.year() + '-' + today.month() + '-' + reminder.reminderDay;
         const monthDate = moment(dateString);
@@ -149,7 +142,7 @@ export default class ReminderHandler {
             const now = moment();
             const diffMins = monthDate.diff(now, 'minute');
 
-            if (canAdd && diffMins > 0) {
+            if (canAdd && (diffMins >= 0 || isTask)) {
                 const ra: reminderActivity = {
                     reminderActivityId: getRandom(),
                     reminderId: reminder.reminderId,
@@ -172,10 +165,6 @@ export default class ReminderHandler {
     }
 
     private static async processYearlyReminder(reminder: reminder, isTask: boolean, raList: Array<reminderActivity>) {
-        if (!isTask) {
-            store.dispatch(addReminder(reminder));
-        }
-
         const today = moment().startOf('day');
         const dateString = today.year() + '-' + reminder.reminderMonth + '-' + reminder.reminderDay;
         const monthDate = moment(dateString);
@@ -211,7 +200,7 @@ export default class ReminderHandler {
             const now = moment();
             const diffMins = monthDate.diff(now, 'minute');
 
-            if (canAdd && diffMins > 0) {
+            if (canAdd && (diffMins >= 0 || isTask)) {
                 const ra: reminderActivity = {
                     reminderActivityId: getRandom(),
                     reminderId: reminder.reminderId,
@@ -234,10 +223,6 @@ export default class ReminderHandler {
     }
 
     private static async processSpecificDateReminder(reminder: reminder, isTask: boolean, raList: Array<reminderActivity>) {
-        if (!isTask) {
-            store.dispatch(addReminder(reminder));
-        }
-
         const today = moment().startOf('day');
         const dueDate = moment(reminder.dueDate);
         const d = moment(reminder.reminderTime);
@@ -265,7 +250,7 @@ export default class ReminderHandler {
             const now = moment();
             const diffMins = dueDate.diff(now, 'minute');
 
-            if (canAdd && diffMins > 0) {
+            if (canAdd && (diffMins >= 0 || isTask)) {
                 const ra: reminderActivity = {
                     reminderActivityId: getRandom(),
                     reminderId: reminder.reminderId,
@@ -295,9 +280,6 @@ export default class ReminderHandler {
             ios: {
                 sound: true,
                 _displayInForeground: true
-            },
-            android: {
-                color: theme["color-primary-500"]
             }
         };
 
@@ -306,8 +288,7 @@ export default class ReminderHandler {
         const t = scheduleTime.toDate();
         NotificationHandler.showNotification(localNotification, { time: t });
 
-        const now = moment()
-        now.set({ second: 10 });
+        const now = moment();
         const diffHours = scheduleTime.diff(now, 'hour');
         const tt = now.toDate();
 

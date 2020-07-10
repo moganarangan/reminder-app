@@ -40,7 +40,8 @@
     "notification": {
       "icon": "./assets/icon3.png",
       "iosDisplayInForeground": true,
-      "color": "#27B4E8"
+      "color": "#27B4E8",
+      "androidMode": "default"
     }
   }
 }

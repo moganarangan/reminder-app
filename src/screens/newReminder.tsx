@@ -175,7 +175,7 @@ class NewReminder extends Component<Props, State> {
                 ...prevState.reminderV,
                 dueDate: date
             }
-        }));
+        }), () => this.isValidTimeSpecific());
     }
 
     setReminderType = (item: any) => {
@@ -346,6 +346,11 @@ class NewReminder extends Component<Props, State> {
                 });
                 return true;
             }
+        } else {
+            this.setState({
+                timeStatus: 'basic',
+                timeCaption: ''
+            });
         }
 
         return true;

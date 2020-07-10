@@ -74,11 +74,11 @@ export default class App extends Component {
   }
 
   async componentDidMount() {
+    TaskHandler.startBackGroundTask();
     await Font.loadAsync(fonts);
     this.setState({ isReady: true });
 
     await NotificationHandler.askNotification();
-    TaskHandler.startBackGroundTask();
     TaskHandler.runTask();
   }
 
